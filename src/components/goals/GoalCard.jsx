@@ -37,9 +37,9 @@ const GoalCard = ({ goal }) => {
       </div>
       <p className="goal-description">{goal.description}</p>
       <div className="goal-footer">
-        <span>Loại: {goal.type === 'semester' ? 'Học kỳ' : 'Tuần'}</span>
-        <span>Kế hoạch: {goal.plan_type === 'inclass' ? 'Trong lớp' : 'Tự học'}</span>
-        {goal.deadline && <span>Hạn: {new Date(goal.deadline).toLocaleDateString()}</span>}
+        <span>Type: {goal.type === 'semester' ? 'Semester' : 'Week'}</span>
+        <span>Plan: {goal.plan_type === 'inclass' ? 'In class' : 'Self study'}</span>
+        {goal.deadline && <span>Deadline: {new Date(goal.deadline).toLocaleDateString()}</span>}
       </div>
     </div>
   );

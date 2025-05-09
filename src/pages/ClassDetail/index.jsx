@@ -18,7 +18,7 @@ const ClassDetail = () => {
         const data = await getGoalsByClass(classId);
         setGoals(data);
       } catch (err) {
-        setError('Không thể tải goals.');
+        setError('Unable to load goals.');
       } finally {
         setLoading(false);
       }
@@ -32,8 +32,8 @@ const ClassDetail = () => {
       <div className="class-detail-main">
         <Header />
         <main className="class-detail-content">
-          <h2 className="class-detail-heading">Goals của môn học</h2>
-          {loading && <div>Đang tải goals...</div>}
+          <h2 className="class-detail-heading">Goals of the Subject</h2>
+          {loading && <div>Loading goals...</div>}
           {error && <div className="class-detail-error">{error}</div>}
           <ul>
             {goals.map(goal => (

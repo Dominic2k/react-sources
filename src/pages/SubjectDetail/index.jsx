@@ -27,11 +27,11 @@ const SubjectDetail = () => {
       } else if (response?.goals && Array.isArray(response.goals)) {
         setGoals(response.goals);
       } else {
-        console.error('Dữ liệu không đúng định dạng mảng:', response);
+        console.error('Data is not in array format:', response);
         setGoals([]);
       }
     } catch (err) {
-      setError('Không thể tải goals.');
+      setError('Unable to load goals.');
       console.error('Error fetching goals:', err);
       setGoals([]);
     } finally {
@@ -72,46 +72,46 @@ const SubjectDetail = () => {
         <Header />
         <main className="subject-detail-content">
           <div className="subject-detail-header">
-            <h2 className="subject-detail-title">Goals của môn học</h2>
+            <h2 className="subject-detail-title">Subject Goals</h2>
             <div className="subject-detail-actions">
               <select
                 value={goalType}
                 onChange={(e) => setGoalType(e.target.value)}
                 className="subject-detail-select"
               >
-                <option value="semester">Mục tiêu học kỳ</option>
-                <option value="weekly">Mục tiêu tuần</option>
+                <option value="semester">Semester Goals</option>
+                <option value="weekly">Weekly Goals</option>
               </select>
               <button
                 onClick={() => setShowForm(true)}
                 className="subject-detail-button"
               >
                 <span style={{ fontSize: '18px' }}>+</span>
-                <span>Tạo goal mới</span>
+                <span>Create New Goal</span>
               </button>
             </div>
           </div>
 
-          {loading && <div className="subject-detail-loading">Đang tải goals...</div>}
+          {loading && <div className="subject-detail-loading">Loading goals...</div>}
 
           {error && <div className="subject-detail-error">{error}</div>}
 
           {!loading && !error && (
             <>
               <GoalSection
-                title={goalType === 'semester' ? 'Mục tiêu học kỳ' : 'Mục tiêu tuần'}
+                title={goalType === 'semester' ? 'Semester Goals' : 'Weekly Goals'}
                 items={displayedGoals}
-                emptyMessage={`Không có ${goalType === 'semester' ? 'mục tiêu học kỳ' : 'mục tiêu tuần'} nào`}
+                emptyMessage={`No ${goalType === 'semester' ? 'semester goals' : 'weekly goals'} available`}
               />
               <GoalSection
-                title="Kế hoạch học trong lớp"
+                title="In-Class Learning Plans"
                 items={inclassPlans}
-                emptyMessage="Không có kế hoạch học trong lớp nào"
+                emptyMessage="No in-class learning plans available"
               />
               <GoalSection
-                title="Kế hoạch tự học"
+                title="Self-Learning Plans"
                 items={selfPlans}
-                emptyMessage="Không có kế hoạch tự học nào"
+                emptyMessage="No self-learning plans available"
               />
             </>
           )}
