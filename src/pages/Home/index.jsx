@@ -3,6 +3,7 @@ import { Sidebar, Header } from '../../components/layout';
 import ClassCard from '../../components/ui/ClassCard';
 import { getStudentSubjects } from '../../services/studentService';
 import { useNavigate } from 'react-router-dom';
+import './Home.css';
 
 const Home = () => {
   const [subjects, setSubjects] = useState([]);
@@ -10,7 +11,7 @@ const Home = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const studentId = 3; // Thay bằng id thực tế
+  const studentId = 3;
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -18,9 +19,6 @@ const Home = () => {
         setLoading(true);
         setError('');
         const data = await getStudentSubjects(studentId);
-        console.log('API raw data:', data);
-        
-        // Đảm bảo subjects luôn là một mảng
         if (Array.isArray(data)) {
           setSubjects(data);
         } else if (data && Array.isArray(data.data)) {
@@ -41,24 +39,22 @@ const Home = () => {
     };
     fetchSubjects();
   }, [studentId]);
-  
-  console.log('Subjects:', subjects, Array.isArray(subjects));
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f7fafd' }}>
+    <div className="home-container">
       <Sidebar />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="home-main">
         <Header />
-        <main style={{ flex: 1, padding: '32px', fontFamily: 'Segoe UI, Arial, sans-serif' }}>
-          <h2 style={{ color: '#222', fontWeight: 600 }}>Các môn học của bạn</h2>
+        <main className="home-content">
+          <h2 className="home-heading">Các môn học của bạn</h2>
           {loading && <div>Đang tải danh sách...</div>}
-          {error && <div style={{ color: 'red', margin: '16px 0' }}>{error}</div>}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 24 }}>
+          {error && <div className="home-error">{error}</div>}
+          <div className="home-class-list">
             {Array.isArray(subjects) && subjects.map((s, idx) => (
               <div
                 key={s.subject_id || idx}
                 onClick={() => navigate(`/subject/${s.subject_id}`)}
-                style={{ cursor: 'pointer' }}
+                className="home-class-item"
               >
                 <ClassCard
                   subject={s.subject_name}
@@ -68,15 +64,8 @@ const Home = () => {
               </div>
             ))}
             {Array.isArray(subjects) && subjects.length === 0 && !loading && (
-              <div style={{ 
-                width: '100%', 
-                textAlign: 'center', 
-                padding: '32px', 
-                background: '#fff',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-              }}>
-                <div style={{ fontSize: '16px', color: '#888' }}>
+              <div className="home-empty">
+                <div className="home-empty-text">
                   Không có môn học nào
                 </div>
               </div>
