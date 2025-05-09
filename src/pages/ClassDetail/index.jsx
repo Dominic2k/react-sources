@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
 import { getGoalsByClass } from '../../services/studentService';
+import './ClassDetail.css';
 
 const ClassDetail = () => {
   const { classId } = useParams();
@@ -26,14 +27,14 @@ const ClassDetail = () => {
   }, [classId]);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f7fafd' }}>
+    <div className="class-detail-container">
       <Sidebar />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="class-detail-main">
         <Header />
-        <main style={{ flex: 1, padding: '32px', fontFamily: 'Segoe UI, Arial, sans-serif' }}>
-          <h2 style={{ color: '#222', fontWeight: 600 }}>Goals của môn học</h2>
+        <main className="class-detail-content">
+          <h2 className="class-detail-heading">Goals của môn học</h2>
           {loading && <div>Đang tải goals...</div>}
-          {error && <div style={{ color: 'red', margin: '16px 0' }}>{error}</div>}
+          {error && <div className="class-detail-error">{error}</div>}
           <ul>
             {goals.map(goal => (
               <li key={goal.id}>
@@ -47,4 +48,4 @@ const ClassDetail = () => {
   );
 };
 
-export default ClassDetail; 
+export default ClassDetail;
