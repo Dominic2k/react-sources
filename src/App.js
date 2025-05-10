@@ -1,13 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SelfStudyPlan from './pages/SelfStudyPlan';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes';
+import './App.css';
 
 function App() {
   return (
-    <Router>
-        <Routes>
-          <Route path="/self-study/:className" element={<SelfStudyPlan />} />
-        </Routes>
-    </Router>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }
 

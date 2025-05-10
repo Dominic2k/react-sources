@@ -1,0 +1,40 @@
+.goal-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.goal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.goal-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #fff;
+}
+
+.goal-description {
+  margin: 8px 0;
+  color: #666;
+}
+
+.goal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #888;
+}
