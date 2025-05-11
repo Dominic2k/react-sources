@@ -1,13 +1,16 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes';
 import './App.css';
 import StudentProfile from './pages/Profile/StudentProfile';
 
 function App() {
   return (
-    <div className="App">
-     <StudentProfile/>
-    </div>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }
+
 
 export default App;

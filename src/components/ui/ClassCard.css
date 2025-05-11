@@ -1,0 +1,33 @@
+.class-card {
+  width: 260px;
+  min-height: 240px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(108, 185, 229, 0.2);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.class-card-header {
+  background: #e89d4c;
+  padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.class-card-spacer {
+  flex: 1;
+}
+
+.class-card-footer {
+  background: #f7fafd;
+  padding: 16px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 103px;
+}

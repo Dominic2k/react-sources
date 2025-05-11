@@ -1,9 +1,10 @@
 
 .profile-container {
-    padding: 40px;
+    /* padding: 40px; */
     background: #f4f9fc; 
-    font-family: 'Segoe UI', sans-serif;
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    /* min-height: 100vh; */
+    display: flex;
 }
 
 .profile-header {
@@ -25,7 +26,6 @@
     font-size: 14px;
 }
 
-/* Định dạng phần tìm kiếm */
 .search-section {
     display: flex;
     align-items: center;
@@ -54,12 +54,14 @@
 
 .profile-card {
     width: 100%;
-    max-width: 900px;
+    max-width: 90%;
     background: #fff;
     border-radius: 15px;
-    padding: 30px;
+    padding: 50px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    margin: 0 auto;
+    margin: 0 40px 40px;
+   
+  
 }
 
 .profile-top {
@@ -110,17 +112,18 @@
 }
 
 .profile-details {
-    display: grid;
-    gap: 20px;
-    grid-template-columns: 1fr 1fr; 
+ 
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
 }
 
 .profile-details p {
     background: #f9fcff;
     border: 2px solid #6cb9e5;
-    padding: 15px 20px;
+    padding: 20px 20px;
     border-radius: 10px;
     margin: 0;
     color: #444;

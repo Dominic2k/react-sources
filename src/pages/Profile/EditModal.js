@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './StudentProfile.css';
+
 const EditModal = ({ data, onClose, onSave }) => {
   const [editedData, setEditedData] = useState({ ...data });
 
@@ -14,14 +15,23 @@ const EditModal = ({ data, onClose, onSave }) => {
       [name]: value
     }));
   };
+
   const handleSubmit = async () => {
+    const payload = {
+      full_name: editedData.name,
+      email: editedData.email,
+      student_code: editedData.studentId,
+      admission_date: editedData.admissionDate,
+      current_semester: parseInt(editedData.currentSemester, 10),
+    };
+
     try {
-      const response = await fetch('http://localhost:8000/api/students/1/profile', {
+      const response = await fetch('http://localhost:8000/api/students/2/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editedData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -29,7 +39,7 @@ const EditModal = ({ data, onClose, onSave }) => {
       }
 
       const result = await response.json();
-      onSave(editedData);
+      onSave(result.data);
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -40,11 +50,9 @@ const EditModal = ({ data, onClose, onSave }) => {
   const fields = [
     { label: 'Name', name: 'name' },
     { label: 'Email', name: 'email' },
-    { label: 'Username', name: 'username' },
     { label: 'Student ID', name: 'studentId' },
     { label: 'Admission Date', name: 'admissionDate' },
     { label: 'Current Semester', name: 'currentSemester' },
-    { label: 'Date of Birth', name: 'dob' },
   ];
 
   return (
