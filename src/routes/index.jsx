@@ -7,10 +7,12 @@ import SubjectDetail from '../pages/SubjectDetail';
 import StudentJournalPage from '../pages/StudentJournalPage';
 import { Navigate } from 'react-router-dom';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
+import StudentProfile from '../pages/Profile/StudentProfile';
 
 
 const AppRoutes = () => (
   <Routes>
+    <Route path='/studentProfile' element={<StudentProfile/>}/>
     <Route path="/" element={<Home />} />
     <Route path="/class/:classId" element={<ClassDetail />} />
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
