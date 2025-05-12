@@ -67,7 +67,7 @@ const SelfStudyPlan = () => {
     };
 
     try {
-      await axios.post('http://localhost:8000/api/self-study-plans', payload);
+      await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
       alert('Study plan saved successfully!');
     } catch (error) {
       console.error('Error response:', error.response?.data);
@@ -105,10 +105,17 @@ const SelfStudyPlan = () => {
           </div>
 
           <form className="study-plan-form" onSubmit={handleSubmit} onReset={handleReset}>
-            <label htmlFor="skills-module">Skills/Module</label>
-            <select id="skills-module" name="skills-module" value={className}>
-              <option>{className.replace(/-/g, ' ')}</option>
-            </select>
+            <select
+  id="skills-module"
+  name="className" // phải trùng với key trong formData
+  value={formData.className}
+  onChange={handleChange}
+>
+  <option value="">-- Choose a module --</option>
+  <option value="IT-english">IT English</option>
+  <option value="Communication-skills">Communication Skills</option>
+  <option value="Time-management">Time Management</option>
+</select>
 
             <label htmlFor="lesson">My lesson - What did I learn?</label>
             <input type="text" id="lesson" name="lesson" value={formData.lesson} onChange={handleChange} />
