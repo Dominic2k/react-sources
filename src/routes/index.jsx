@@ -4,7 +4,11 @@ import Home from '../pages/Home';
 import About from '../pages/About';
 import ClassDetail from '../pages/ClassDetail';
 import SubjectDetail from '../pages/SubjectDetail';
+import StudentJournalPage from '../pages/StudentJournalPage';
+import { Navigate } from 'react-router-dom';
+import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import StudentProfile from '../pages/Profile/StudentProfile';
+
 
 const AppRoutes = () => (
   <Routes>
@@ -13,6 +17,12 @@ const AppRoutes = () => (
     <Route path="/class/:classId" element={<ClassDetail />} />
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/about" element={<About />} />
+
+
+    <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
+    <Route path="/student-journal" element={<StudentJournalPage />} />
+      
+    <Route path="/self-study/:className" element={<SelfStudyPlan />} />
   </Routes>
 );
 

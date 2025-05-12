@@ -6,7 +6,7 @@ import './StudentProfile.css';
 const StudentProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const id = localStorage.getItem('userId') || 2; // Fetch user ID from localStorage
+  const id = localStorage.getItem('userId') || 2; 
 
   const fetchProfile = async () => {
     try {
