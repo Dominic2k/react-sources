@@ -8,6 +8,7 @@ import StudentJournalPage from '../pages/StudentJournalPage';
 import { Navigate } from 'react-router-dom';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import StudentProfile from '../pages/Profile/StudentProfile';
+import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 
 
 const AppRoutes = () => (
@@ -23,7 +24,10 @@ const AppRoutes = () => (
     <Route path="/student-journal" element={<StudentJournalPage />} />
       
 
-    <Route path="/self-study/:className" element={<SelfStudyPlan />} />
+    <Route path="/self-study-plans/:className/:goalId" element={<SelfStudyPlan />} />
+    <Route path="/self-study-plans" element={<ViewSelfStudyPlan />} />
+    <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
+
   </Routes>
 );
 

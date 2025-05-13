@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';  // Đảm bảo bạn đã import useNavigate
 import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './SelfStudyPlan.css';
 
 const SelfStudyPlan = () => {
-  const { className } = useParams();
+  const { className, goalId } = useParams();
   const today = new Date().toISOString().split('T')[0];
-
   const [formData, setFormData] = useState({
+    module: '',
     lesson: '',
     time: '',
     resources: '',
@@ -19,15 +20,21 @@ const SelfStudyPlan = () => {
     reinforcing: '',
   });
 
+  const [classNameFromAPI, setClassName] = useState('');
+  const navigate = useNavigate();  // Khai báo hook navigate
+
+  const handleGoToList = () => {
+    navigate('/self-study-plans/');  // Điều hướng đến trang danh sách
+  };
+
   useEffect(() => {
     const fetchStudyPlan = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/self-study-plans/${className}?date=${today}`
-        );
+        const response = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
         const data = response.data;
 
         setFormData({
+          module: data.class_name || '',
           lesson: data.lesson || '',
           time: data.time || '',
           resources: data.resources || '',
@@ -37,13 +44,17 @@ const SelfStudyPlan = () => {
           evaluation: data.evaluation || '',
           reinforcing: data.reinforcing || '',
         });
+
+        if (data.class_name) {
+          setClassName(data.class_name);
+        }
       } catch (error) {
         console.warn('No existing study plan found or error fetching:', error);
       }
     };
 
-    fetchStudyPlan();
-  }, [className, today]);
+    if (goalId) fetchStudyPlan();
+  }, [goalId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +65,8 @@ const SelfStudyPlan = () => {
     e.preventDefault();
 
     const payload = {
-      class_name: className,
+      goal_id: goalId,
+      class_name: formData.module,
       date: today,
       lesson: formData.lesson,
       time: formData.time,
@@ -77,6 +89,7 @@ const SelfStudyPlan = () => {
 
   const handleReset = () => {
     setFormData({
+      module: '',
       lesson: '',
       time: '',
       resources: '',
@@ -93,10 +106,15 @@ const SelfStudyPlan = () => {
       <div className="sidebar">
         <Sidebar />
       </div>
-    <div className="content">
+      <div className="content">
         <Header />
         <section className="content" aria-label="Study Plan Content">
-          <h3>{className.replace(/-/g, ' ')}</h3>
+          <h3>{classNameFromAPI ? classNameFromAPI.replace(/-/g, ' ') : 'Class Name not available'}</h3>
+
+          {/* Thêm nút để quay lại trang danh sách */}
+          <button onClick={handleGoToList} className="btn-back">
+            Back to List
+          </button>
 
           <div className="btn-group" role="group" aria-label="Study mode selection">
             <div className="date-icon" style={{ marginLeft: 'auto' }}>
@@ -105,17 +123,18 @@ const SelfStudyPlan = () => {
           </div>
 
           <form className="study-plan-form" onSubmit={handleSubmit} onReset={handleReset}>
+            <label htmlFor="module">Module</label>
             <select
-  id="skills-module"
-  name="className" // phải trùng với key trong formData
-  value={formData.className}
-  onChange={handleChange}
->
-  <option value="">-- Choose a module --</option>
-  <option value="IT-english">IT English</option>
-  <option value="Communication-skills">Communication Skills</option>
-  <option value="Time-management">Time Management</option>
-</select>
+              id="module"
+              name="module"
+              value={formData.module}
+              onChange={handleChange}
+            >
+              <option value="">-- Choose a module --</option>
+              <option value="IT English">IT English</option>
+              <option value="Communication Skills">Communication Skills</option>
+              <option value="Time Management">Time Management</option>
+            </select>
 
             <label htmlFor="lesson">My lesson - What did I learn?</label>
             <input type="text" id="lesson" name="lesson" value={formData.lesson} onChange={handleChange} />
