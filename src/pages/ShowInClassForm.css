@@ -1,0 +1,45 @@
+/* InClassForm.css */
+
+.table-container {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.inclass-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #999;
+}
+
+.inclass-table th,
+.inclass-table td {
+  border: 1px solid #999;
+  padding: 10px;
+  vertical-align: top;
+  text-align: left;
+  font-size: 14px;
+}
+
+.inclass-table thead tr:first-child th {
+  background-color: #c1002b; /* đỏ đậm */
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  font-size: 16px;
+}
+
+.inclass-table thead tr:nth-child(2) th {
+  background-color: #eee;
+  color: #000;
+  text-align: center;
+  font-weight: bold;
+}
+
+.inclass-table td {
+  background-color: #fff;
+}
+
+.inclass-table select {
+  padding: 5px;
+  font-size: 14px;
+}
