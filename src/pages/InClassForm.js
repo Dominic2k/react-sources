@@ -1,8 +1,9 @@
-// src/pages/StudentJournalPage.jsx
-import React, { useState } from 'react';
-import './StudentJournalPage.css';
 
-function StudentJournalPage() {
+import React, { useState } from 'react';
+import './InClassForm.css';
+
+
+function InClassForm() {
   const [module, setModule] = useState('IT English');
   const [lesson, setLesson] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('');
@@ -95,7 +96,7 @@ function StudentJournalPage() {
           <label>Problem solved</label>
           <select value={solved} onChange={(e) => setSolved(e.target.value)}>
             <option>Yes</option>
-            <option>No</option>
+            <option>Not Yet</option>
           </select>
         </div>
 
@@ -108,4 +109,4 @@ function StudentJournalPage() {
   );
 }
 
-export default StudentJournalPage;
+export default InClassForm;
