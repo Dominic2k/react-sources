@@ -7,6 +7,7 @@ import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import InClassForm from '../pages/InClassForm';
 import ShowInClassForm from '../pages/ShowInClassForm';
 import { Navigate } from 'react-router-dom';
+import StudentProfile from '../pages/Profile/StudentProfile';
 
 const AppRoutes = () => (
   <Routes>
