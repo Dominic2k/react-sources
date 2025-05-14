@@ -13,7 +13,7 @@ const SubjectDetail = () => {
   const [error, setError] = useState('');
   const [goalType, setGoalType] = useState('semester');
   const [showForm, setShowForm] = useState(false);
-  const studentId = 3;
+  const studentId = 1;
 
   const fetchGoals = async () => {
     try {

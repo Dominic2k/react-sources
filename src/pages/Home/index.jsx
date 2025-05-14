@@ -11,7 +11,7 @@ const Home = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const studentId = 3;
+  const studentId = 1;
 
   useEffect(() => {
     const fetchSubjects = async () => {

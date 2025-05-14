@@ -13,14 +13,15 @@ const ViewSelfStudyPlan = () => {
     fetchPlans();
   }, []);
 
-  const fetchPlans = async () => {
-    try {
-      const res = await axios.get('http://localhost:8000/api/self-study-plans');
-      setPlans(res.data);
-    } catch (err) {
-      console.error('Failed to fetch plans:', err);
-    }
-  };
+ const fetchPlans = async () => {
+  try {
+    const goalId = 1;
+    const res = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
+    setPlans(res.data);
+  } catch (err) {
+    console.error('Failed to fetch plans:', err);
+  }
+};
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);

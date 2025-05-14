@@ -6,7 +6,7 @@ import axios from 'axios';
 import './SelfStudyPlan.css';
 
 const SelfStudyPlan = () => {
-  const { className, goalId } = useParams();
+  const {goalId } = useParams();
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     module: '',
@@ -20,7 +20,6 @@ const SelfStudyPlan = () => {
     reinforcing: '',
   });
 
-  const [classNameFromAPI, setClassName] = useState('');
   const navigate = useNavigate();  // Khai báo hook navigate
 
   const handleGoToList = () => {
@@ -30,11 +29,10 @@ const SelfStudyPlan = () => {
   useEffect(() => {
     const fetchStudyPlan = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
+        const response = await axios.get(`http://localhost:8000/api/self-study-plans/`);
         const data = response.data;
 
         setFormData({
-          module: data.class_name || '',
           lesson: data.lesson || '',
           time: data.time || '',
           resources: data.resources || '',
@@ -45,9 +43,6 @@ const SelfStudyPlan = () => {
           reinforcing: data.reinforcing || '',
         });
 
-        if (data.class_name) {
-          setClassName(data.class_name);
-        }
       } catch (error) {
         console.warn('No existing study plan found or error fetching:', error);
       }
@@ -66,7 +61,6 @@ const SelfStudyPlan = () => {
 
     const payload = {
       goal_id: goalId,
-      class_name: formData.module,
       date: today,
       lesson: formData.lesson,
       time: formData.time,
@@ -109,7 +103,6 @@ const SelfStudyPlan = () => {
       <div className="content">
         <Header />
         <section className="content" aria-label="Study Plan Content">
-          <h3>{classNameFromAPI ? classNameFromAPI.replace(/-/g, ' ') : 'Class Name not available'}</h3>
 
           {/* Thêm nút để quay lại trang danh sách */}
           <button onClick={handleGoToList} className="btn-back">

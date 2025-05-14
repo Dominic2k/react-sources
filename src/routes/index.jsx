@@ -23,7 +23,7 @@ const AppRoutes = () => (
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
       
 
-    <Route path="/self-study-plans/:className/:goalId" element={<SelfStudyPlan />} />
+    <Route path="/self-study-plans/:goalId" element={<SelfStudyPlan />} />
     <Route path="/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
 
