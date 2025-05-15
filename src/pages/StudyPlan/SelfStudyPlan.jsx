@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './SelfStudyPlan.css';
 
 const SelfStudyPlan = () => {
-  const { className } = useParams();
+  const { className, goalId } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const subjectId = queryParams.get('subjectId');
+  
   const today = new Date().toISOString().split('T')[0];
-
   const [formData, setFormData] = useState({
+    module: '',
     lesson: '',
     time: '',
     resources: '',
@@ -19,15 +23,26 @@ const SelfStudyPlan = () => {
     reinforcing: '',
   });
 
+  const [classNameFromAPI, setClassName] = useState('');
+  const navigate = useNavigate();
+
+  const handleGoToList = () => {
+    // Nếu có subjectId, quay lại trang subject detail
+    if (subjectId) {
+      navigate(`/subject/${subjectId}`);
+    } else {
+      navigate('/self-study-plans/');
+    }
+  };
+
   useEffect(() => {
     const fetchStudyPlan = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/self-study-plans/${className}?date=${today}`
-        );
+        const response = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
         const data = response.data;
 
         setFormData({
+          module: data.class_name || '',
           lesson: data.lesson || '',
           time: data.time || '',
           resources: data.resources || '',
@@ -37,13 +52,17 @@ const SelfStudyPlan = () => {
           evaluation: data.evaluation || '',
           reinforcing: data.reinforcing || '',
         });
+
+        if (data.class_name) {
+          setClassName(data.class_name);
+        }
       } catch (error) {
         console.warn('No existing study plan found or error fetching:', error);
       }
     };
 
-    fetchStudyPlan();
-  }, [className, today]);
+    if (goalId) fetchStudyPlan();
+  }, [goalId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +73,8 @@ const SelfStudyPlan = () => {
     e.preventDefault();
 
     const payload = {
-      class_name: className,
+      goal_id: goalId,
+      class_name: formData.module,
       date: today,
       lesson: formData.lesson,
       time: formData.time,
@@ -64,11 +84,17 @@ const SelfStudyPlan = () => {
       plan_follow: formData.planFollow,
       evaluation: formData.evaluation,
       reinforcing: formData.reinforcing,
+      subject_id: subjectId // Thêm subject_id vào payload
     };
 
     try {
-      await axios.post('http://localhost:8000/api/self-study-plans', payload);
+      await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
       alert('Study plan saved successfully!');
+      
+      // Nếu có subjectId, quay lại trang subject detail
+      if (subjectId) {
+        navigate(`/subject/${subjectId}`);
+      }
     } catch (error) {
       console.error('Error response:', error.response?.data);
       alert('Failed to save study plan');
@@ -77,6 +103,7 @@ const SelfStudyPlan = () => {
 
   const handleReset = () => {
     setFormData({
+      module: '',
       lesson: '',
       time: '',
       resources: '',
@@ -93,10 +120,15 @@ const SelfStudyPlan = () => {
       <div className="sidebar">
         <Sidebar />
       </div>
-    <div className="content">
+      <div className="content">
         <Header />
         <section className="content" aria-label="Study Plan Content">
-          <h3>{className.replace(/-/g, ' ')}</h3>
+          <h3>{classNameFromAPI ? classNameFromAPI.replace(/-/g, ' ') : 'Class Name not available'}</h3>
+
+          {/* Thêm nút để quay lại trang danh sách */}
+          <button onClick={handleGoToList} className="btn-back">
+            Back to List
+          </button>
 
           <div className="btn-group" role="group" aria-label="Study mode selection">
             <div className="date-icon" style={{ marginLeft: 'auto' }}>
@@ -105,9 +137,17 @@ const SelfStudyPlan = () => {
           </div>
 
           <form className="study-plan-form" onSubmit={handleSubmit} onReset={handleReset}>
-            <label htmlFor="skills-module">Skills/Module</label>
-            <select id="skills-module" name="skills-module" value={className}>
-              <option>{className.replace(/-/g, ' ')}</option>
+            <label htmlFor="module">Module</label>
+            <select
+              id="module"
+              name="module"
+              value={formData.module}
+              onChange={handleChange}
+            >
+              <option value="">-- Choose a module --</option>
+              <option value="IT English">IT English</option>
+              <option value="Communication Skills">Communication Skills</option>
+              <option value="Time Management">Time Management</option>
             </select>
 
             <label htmlFor="lesson">My lesson - What did I learn?</label>
