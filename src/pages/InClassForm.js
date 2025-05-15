@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import './InClassForm.css';
 
 function InClassForm() {
+  const [date, setDate] = useState(''); 
   const [module, setModule] = useState('IT English');
   const [lesson, setLesson] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('');
@@ -17,6 +18,7 @@ function InClassForm() {
   const subjectId = queryParams.get('subjectId');
 
   const handleReset = () => {
+    setDate('');
     setModule('IT English');
     setLesson('');
     setDifficultyLevel('');
@@ -27,6 +29,7 @@ function InClassForm() {
 
   const handleSave = async () => {
     const data = {
+      date, 
       skills_module: module,
       lesson_summary: lesson,
       self_assessment: difficultyLevel,
@@ -67,9 +70,13 @@ function InClassForm() {
   return (
     <div className="student-journal-container">
       <h2 className="title">IN-CLASS PLAN</h2>
-      
 
       <form className="journal-form">
+        <div className="form-group">
+          <label>Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        </div>
+
         <div className="form-group">
           <label>Skills/Module</label>
           <select value={module} onChange={(e) => setModule(e.target.value)}>
