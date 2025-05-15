@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';  // Đảm bảo bạn đã import useNavigate
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './SelfStudyPlan.css';
 
 const SelfStudyPlan = () => {
   const { className, goalId } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const subjectId = queryParams.get('subjectId');
+  
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     module: '',
@@ -21,10 +24,15 @@ const SelfStudyPlan = () => {
   });
 
   const [classNameFromAPI, setClassName] = useState('');
-  const navigate = useNavigate();  // Khai báo hook navigate
+  const navigate = useNavigate();
 
   const handleGoToList = () => {
-    navigate('/self-study-plans/');  // Điều hướng đến trang danh sách
+    // Nếu có subjectId, quay lại trang subject detail
+    if (subjectId) {
+      navigate(`/subject/${subjectId}`);
+    } else {
+      navigate('/self-study-plans/');
+    }
   };
 
   useEffect(() => {
@@ -76,11 +84,17 @@ const SelfStudyPlan = () => {
       plan_follow: formData.planFollow,
       evaluation: formData.evaluation,
       reinforcing: formData.reinforcing,
+      subject_id: subjectId // Thêm subject_id vào payload
     };
 
     try {
       await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
       alert('Study plan saved successfully!');
+      
+      // Nếu có subjectId, quay lại trang subject detail
+      if (subjectId) {
+        navigate(`/subject/${subjectId}`);
+      }
     } catch (error) {
       console.error('Error response:', error.response?.data);
       alert('Failed to save study plan');

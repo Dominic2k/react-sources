@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "./ShowInClassForm.css";
 
-const ShowInClassForm = () => {
+
+const ShowInClassForm = ({ subjectId }) => {
   const [plans, setPlans] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/in-class-plans")
+    // Nếu có subjectId, lọc theo subject
+    const url = subjectId 
+      ? `http://localhost:8000/api/in-class-plans?subject_id=${subjectId}`
+      : "http://localhost:8000/api/in-class-plans";
+      
+    fetch(url)
       .then((response) => response.json())
       .then((data) => setPlans(data))
       .catch((error) => console.error("Fetch error:", error));
-  }, []);
+  }, [subjectId]);
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {

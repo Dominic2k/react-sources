@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import './InClassForm.css';
 
 function InClassForm() {
@@ -9,6 +11,11 @@ function InClassForm() {
   const [difficulties, setDifficulties] = useState('');
   const [plan, setPlan] = useState('');
   const [solved, setSolved] = useState('Yes');
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const subjectId = queryParams.get('subjectId');
 
   const handleReset = () => {
     setDate('');
@@ -29,6 +36,7 @@ function InClassForm() {
       difficulties_faced: difficulties,
       improvement_plan: plan,
       problem_solved: solved === 'Yes',
+      subject_id: subjectId // Thêm subject_id vào payload
     };
 
     try {
@@ -48,6 +56,11 @@ function InClassForm() {
       const result = await response.json();
       console.log('Saved entry:', result);
       alert('Saved successfully!');
+      
+      // Quay lại trang subject detail nếu có subjectId
+      if (subjectId) {
+        navigate(`/subject/${subjectId}`);
+      }
     } catch (error) {
       console.error('Error saving entry:', error);
       alert('Failed to save entry.');
@@ -108,6 +121,11 @@ function InClassForm() {
         <div className="button-group">
           <button type="button" onClick={handleSave} className="save-button">Save</button>
           <button type="button" onClick={handleReset} className="reset-button">Reset</button>
+          {subjectId && (
+            <button type="button" onClick={() => navigate(`/subject/${subjectId}`)} className="back-button">
+              Back to Subject
+            </button>
+          )}
         </div>
       </form>
     </div>
