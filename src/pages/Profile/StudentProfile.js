@@ -92,7 +92,7 @@ const StudentProfile = () => {
       {isModalOpen && (
         <EditModal
           data={profileData}
-          id={id} // Pass id to the EditModal
+          id={id} 
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
         />

@@ -7,7 +7,9 @@ import SubjectDetail from '../pages/SubjectDetail';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import InClassForm from '../pages/InClassForm';
 import ShowInClassForm from '../pages/ShowInClassForm';
+import StudentProfile from '../pages/Profile/StudentProfile';
 import { Navigate } from 'react-router-dom';
+import AchievementPage from '../pages/Achievement/AchievementPage';
 
 const AppRoutes = () => (
   <Routes>
@@ -21,6 +23,7 @@ const AppRoutes = () => (
     <Route path="/in-class-form" element={<InClassForm />} />
 
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
+     <Route path="/achievement" element ={<AchievementPage/>}/>
   </Routes>
 );
 
