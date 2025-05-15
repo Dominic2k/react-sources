@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
 
@@ -31,22 +30,13 @@ const ViewSelfStudyPlan = () => {
     setSelectedPlan(null);
   };
 
-  const handleGoToForm = () => {
-    navigate('/self-study-plans/create'); // Điều hướng đến trang form tạo kế hoạch
-  };
-
   return (
     <div className="view-self-study-page">
-      <Sidebar />
       <div className="main-content">
-        <Header />
 
         <div className="self-study-container">
           <div className="top-bar">
-            <h2>📚 Self Study Plans</h2>
             <div className="buttons">
-              {/* Nút "Create New" luôn hiển thị */}
-              <button onClick={handleGoToForm}>➕ Create New</button>
 
               {/* Nút "Back" luôn hiển thị khi có kế hoạch được chọn */}
               <button
@@ -61,17 +51,21 @@ const ViewSelfStudyPlan = () => {
           {/* Danh sách các kế hoạch */}
           {!selectedPlan && (
             <div className="plan-list">
-              <ul>
-                {plans.map((plan) => (
-                  <li
-                    key={plan.id}
-                    className="plan-item"
-                    onClick={() => handleSelectPlan(plan)}
-                  >
-                    <strong>{plan.class_name}</strong> – {plan.date}
-                  </li>
-                ))}
-              </ul>
+              {plans.length > 0 ? (
+                <ul>
+                  {plans.map((plan) => (
+                    <li
+                      key={plan.id}
+                      className="plan-item"
+                      onClick={() => handleSelectPlan(plan)}
+                    >
+                      <strong>{plan.class_name}</strong> – {plan.date}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="empty-message">No self-study plans available</p>
+              )}
             </div>
           )}
 

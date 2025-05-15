@@ -6,8 +6,8 @@ import SubjectDetail from '../pages/SubjectDetail';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import InClassForm from '../pages/InClassForm';
 import ShowInClassForm from '../pages/ShowInClassForm';
-import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
+import { Navigate } from 'react-router-dom';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import TeacherClasses from '../pages/TeacherClasses';
 
@@ -27,7 +27,6 @@ const AppRoutes = () => (
     <Route path="/self-study-plans/:goalId" element={<SelfStudyPlan />} />
     <Route path="/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
-
     <Route path="/self-study/:className" element={<SelfStudyPlan />} />
 
     <Route path="/in-class-form" element={<InClassForm />} />

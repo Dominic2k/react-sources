@@ -1,17 +1,24 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import React, { useState } from 'react';
 import './InClassForm.css';
 
-
 function InClassForm() {
+  const [date, setDate] = useState(''); 
   const [module, setModule] = useState('IT English');
   const [lesson, setLesson] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('');
   const [difficulties, setDifficulties] = useState('');
   const [plan, setPlan] = useState('');
   const [solved, setSolved] = useState('Yes');
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const subjectId = queryParams.get('subjectId');
 
   const handleReset = () => {
+    setDate('');
     setModule('IT English');
     setLesson('');
     setDifficultyLevel('');
@@ -22,12 +29,14 @@ function InClassForm() {
 
   const handleSave = async () => {
     const data = {
+      date, 
       skills_module: module,
       lesson_summary: lesson,
       self_assessment: difficultyLevel,
       difficulties_faced: difficulties,
       improvement_plan: plan,
       problem_solved: solved === 'Yes',
+      subject_id: subjectId // Thêm subject_id vào payload
     };
 
     try {
@@ -47,6 +56,11 @@ function InClassForm() {
       const result = await response.json();
       console.log('Saved entry:', result);
       alert('Saved successfully!');
+      
+      // Quay lại trang subject detail nếu có subjectId
+      if (subjectId) {
+        navigate(`/subject/${subjectId}`);
+      }
     } catch (error) {
       console.error('Error saving entry:', error);
       alert('Failed to save entry.');
@@ -56,9 +70,13 @@ function InClassForm() {
   return (
     <div className="student-journal-container">
       <h2 className="title">IN-CLASS PLAN</h2>
-      
 
       <form className="journal-form">
+        <div className="form-group">
+          <label>Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        </div>
+
         <div className="form-group">
           <label>Skills/Module</label>
           <select value={module} onChange={(e) => setModule(e.target.value)}>
@@ -103,6 +121,11 @@ function InClassForm() {
         <div className="button-group">
           <button type="button" onClick={handleSave} className="save-button">Save</button>
           <button type="button" onClick={handleReset} className="reset-button">Reset</button>
+          {subjectId && (
+            <button type="button" onClick={() => navigate(`/subject/${subjectId}`)} className="back-button">
+              Back to Subject
+            </button>
+          )}
         </div>
       </form>
     </div>
