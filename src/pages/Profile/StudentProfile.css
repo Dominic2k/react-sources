@@ -181,7 +181,6 @@
     background-color: #fff;
     padding: 30px 40px;
     border-radius: 15px;
-    width: 400px;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     text-align: left;
     animation: slideDown 0.3s ease-out;
@@ -217,7 +216,6 @@
   }
   
   .form-group input {
-    width: 100%;
     padding: 10px 14px;
     border: 2px solid #6cb9e5;
     border-radius: 8px;
