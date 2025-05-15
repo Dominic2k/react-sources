@@ -9,6 +9,7 @@ import ShowInClassForm from '../pages/ShowInClassForm';
 import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
+import TeacherClasses from '../pages/TeacherClasses';
 
 
 const AppRoutes = () => (
@@ -32,6 +33,8 @@ const AppRoutes = () => (
     <Route path="/in-class-form" element={<InClassForm />} />
 
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
+
+    <Route path="/classes" element={<TeacherClasses />} />
   </Routes>
 );
 

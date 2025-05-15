@@ -14,6 +14,7 @@ const SubjectDetail = () => {
   const [goalType, setGoalType] = useState('semester');
   const [showForm, setShowForm] = useState(false);
   const studentId = 1;
+console.log('subjectId:', subjectId);
 
   const fetchGoals = async () => {
     try {
