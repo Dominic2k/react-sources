@@ -35,8 +35,8 @@ function InClassForm() {
       self_assessment: difficultyLevel,
       difficulties_faced: difficulties,
       improvement_plan: plan,
-      problem_solved: solved === 'Yes',
-      subject_id: subjectId // Thêm subject_id vào payload
+      problem_solved: solved === 'Yes' ? 1 : 0, // Chuyển thành 1/0 để phù hợp với ShowInClassForm
+      subject_id: subjectId
     };
 
     try {
