@@ -267,6 +267,7 @@ const SubjectDetail = () => {
 
 // Component mới cho In-class Form dạng modal
 const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
+  const [date, setDate] = useState(''); // Thêm state date
   const [module, setModule] = useState('IT English');
   const [lesson, setLesson] = useState('');
   const [difficultyLevel, setDifficultyLevel] = useState('');
@@ -275,6 +276,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
   const [solved, setSolved] = useState('Yes');
 
   const handleReset = () => {
+    setDate('');
     setModule('IT English');
     setLesson('');
     setDifficultyLevel('');
@@ -285,12 +287,13 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 
   const handleSave = async () => {
     const data = {
+      date,
       skills_module: module,
       lesson_summary: lesson,
       self_assessment: difficultyLevel,
       difficulties_faced: difficulties,
       improvement_plan: plan,
-      problem_solved: solved === 'Yes',
+      problem_solved: solved === 'Yes' ? 1 : 0, // Chuyển thành 1/0 để phù hợp với ShowInClassForm
       subject_id: subjectId
     };
 
@@ -323,6 +326,15 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
     <div className="inclass-form-modal">
       <form className="journal-form">
         <div className="form-group">
+          <label>Date</label>
+          <input 
+            type="date" 
+            value={date} 
+            onChange={(e) => setDate(e.target.value)} 
+          />
+        </div>
+
+        <div className="form-group">
           <label>Skills/Module</label>
           <select value={module} onChange={(e) => setModule(e.target.value)}>
             <option value="IT English">IT English</option>
@@ -344,36 +356,9 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
         <div className="form-group">
           <label>Self-assessment</label>
           <div className="radio-group">
-            <label>
-              <input 
-                type="radio" 
-                name="difficulty" 
-                value="1" 
-                checked={difficultyLevel === "1"}
-                onChange={(e) => setDifficultyLevel(e.target.value)} 
-              /> 
-              1. I need more practice
-            </label>
-            <label>
-              <input 
-                type="radio" 
-                name="difficulty" 
-                value="2" 
-                checked={difficultyLevel === "2"}
-                onChange={(e) => setDifficultyLevel(e.target.value)} 
-              /> 
-              2. I sometimes find this difficult
-            </label>
-            <label>
-              <input 
-                type="radio" 
-                name="difficulty" 
-                value="3" 
-                checked={difficultyLevel === "3"}
-                onChange={(e) => setDifficultyLevel(e.target.value)} 
-              /> 
-              3. No problem!
-            </label>
+            <label><input type="radio" name="difficulty" value="1" onChange={(e) => setDifficultyLevel(e.target.value)} /> 1. I need more practice</label>
+            <label><input type="radio" name="difficulty" value="2" onChange={(e) => setDifficultyLevel(e.target.value)} /> 2. I sometimes find this difficult</label>
+            <label><input type="radio" name="difficulty" value="3" onChange={(e) => setDifficultyLevel(e.target.value)} /> 3. No problem!</label>
           </div>
         </div>
 
@@ -383,7 +368,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
             type="text" 
             value={difficulties} 
             onChange={(e) => setDifficulties(e.target.value)} 
-            placeholder="Describe any difficulties you faced"
+            placeholder="Enter difficulties you faced"
           />
         </div>
 
@@ -393,15 +378,15 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
             type="text" 
             value={plan} 
             onChange={(e) => setPlan(e.target.value)} 
-            placeholder="What's your improvement plan?"
+            placeholder="Enter your improvement plan"
           />
         </div>
 
         <div className="form-group">
           <label>Problem solved</label>
           <select value={solved} onChange={(e) => setSolved(e.target.value)}>
-            <option value="Yes">Yes</option>
-            <option value="Not Yet">Not Yet</option>
+            <option>Yes</option>
+            <option>Not Yet</option>
           </select>
         </div>
 
