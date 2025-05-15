@@ -6,11 +6,29 @@ import './StudentProfile.css';
 const StudentProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const id = localStorage.getItem('userId') || 2; 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // Lấy userId từ localStorage
+  const id = localStorage.getItem('userId') || 2;
 
   const fetchProfile = async () => {
+    setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/students/${id}/profile`);
+      // Thêm timeout để tránh treo UI nếu server không phản hồi
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const res = await fetch(`http://localhost:8000/api/students/${id}/profile`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!res.ok) {
+        throw new Error(`Server responded with status: ${res.status}`);
+      }
+      
       const data = await res.json();
 
       if (data.success && data.data.user) {
@@ -30,9 +48,23 @@ const StudentProfile = () => {
           role: user.role || 'student',
           lastLogin: user.last_login,
         });
+      } else {
+        setError('Invalid data format received from server');
+        console.warn('Invalid data format:', data);
       }
     } catch (err) {
       console.error('Failed to fetch profile:', err);
+      
+      // Hiển thị thông báo lỗi chi tiết hơn
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please check if the server is running.');
+      } else if (!navigator.onLine) {
+        setError('You are offline. Please check your internet connection.');
+      } else {
+        setError(`Error connecting to server: ${err.message}`);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,11 +73,30 @@ const StudentProfile = () => {
   }, [id]);
 
   const handleSave = async () => {
-    await fetchProfile(); 
+    await fetchProfile();
     setIsModalOpen(false);
   };
 
-  if (!profileData) return <p>Loading...</p>;
+  if (loading) return (
+    <div className="profile-container">
+      <Sidebar />
+      <div className="profile-loading">Loading profile data...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="profile-container">
+      <Sidebar />
+      <div className="profile-error">{error}</div>
+    </div>
+  );
+
+  if (!profileData) return (
+    <div className="profile-container">
+      <Sidebar />
+      <div className="profile-error">No profile data available</div>
+    </div>
+  );
 
   return (
     <div className="profile-container">
@@ -60,7 +111,11 @@ const StudentProfile = () => {
           <div className="search-section">
             <input type="text" placeholder="Search" className="search-input" />
             <div className="sidebar-avatar-img">
-              <span role="img" aria-label="avatar">👩‍🎓</span>
+              {profileData.profileImageUrl ? (
+                <img src={profileData.profileImageUrl} alt="User avatar" className="top-avatar" />
+              ) : (
+                <span role="img" aria-label="avatar">👩‍🎓</span>
+              )}
             </div>
           </div>
         </div>
@@ -68,7 +123,11 @@ const StudentProfile = () => {
         <div className="profile-top">
           <div className="profile-info">
             <div className="sidebar-avatar-img">
-              <span role="img" aria-label="avatar">👩‍🎓</span>
+              {profileData.profileImageUrl ? (
+                <img src={profileData.profileImageUrl} alt="User avatar" className="profile-avatar" />
+              ) : (
+                <span role="img" aria-label="avatar">👩‍🎓</span>
+              )}
             </div>
             <div>
               <h2>{profileData.name}</h2>
@@ -92,7 +151,7 @@ const StudentProfile = () => {
       {isModalOpen && (
         <EditModal
           data={profileData}
-          id={id} // Pass id to the EditModal
+          id={id}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
         />
