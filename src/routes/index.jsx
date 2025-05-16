@@ -1,4 +1,4 @@
-import React from 'react';
+import {React} from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import About from '../pages/About';
@@ -9,13 +9,20 @@ import ShowInClassForm from '../pages/ShowInClassForm';
 import { Navigate } from 'react-router-dom';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import StudentProfile from '../pages/Profile/StudentProfile';
-// Xóa import StudentProfile trùng lặp nếu có
+
+import LoginForm from '../pages/Auth/Login';
+import { useNavigate } from 'react-router-dom';
 
 const AppRoutes = () => (
+
   <Routes>
+    <Route path='/studentProfile' element={<StudentProfile/>}/>
+
     <Route path="/" element={<Home />} />
-    <Route path="/about" element={<About />} />
-    <Route path="/profile" element={<StudentProfile />} />
+    <Route path="/home" element={<Home />} />
+
+    <Route path="/login" element={<LoginForm />} />
+
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
@@ -25,7 +32,8 @@ const AppRoutes = () => (
     <Route path="/self-study/:className" element={<SelfStudyPlan />} />
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
-  </Routes>
-);
 
+  </Routes>
+  
+);
 export default AppRoutes;

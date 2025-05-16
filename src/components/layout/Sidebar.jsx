@@ -10,57 +10,44 @@ const Sidebar = () => {
   });
 
   useEffect(() => {
-    // Lấy userId từ localStorage
-    const userId = localStorage.getItem('userId') || 2;
-    
-    // Fetch thông tin người dùng
     const fetchUserData = async () => {
       try {
-        // Thêm timeout để tránh treo UI nếu server không phản hồi
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        const res = await fetch(`http://localhost:8000/api/students/${userId}/profile`, {
-          signal: controller.signal
+
+        const token = localStorage.getItem('token');
+
+        const res = await fetch('http://localhost:8000/api/user', {
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         });
-        
+
         clearTimeout(timeoutId);
-        
+
         if (!res.ok) {
           throw new Error(`Server responded with status: ${res.status}`);
         }
-        
+
         const data = await res.json();
-        
+
         if (data.success && data.data.user) {
           const user = data.data.user;
           setUserData({
-            name: user.full_name || user.username || 'Student',
-            avatar: user.avatar_url
+            name: user.full_name || 'Student',
+            avatar: user.avatar_url || null
           });
         } else {
-          console.warn('Invalid data format received:', data);
-          // Sử dụng dữ liệu mặc định nếu không có dữ liệu hợp lệ
-          setUserData({
-            name: 'Student',
-            avatar: null
-          });
+          setUserData({ name: 'Student', avatar: null });
         }
       } catch (err) {
         console.error('Failed to fetch user data:', err);
-        // Hiển thị thông tin lỗi chi tiết hơn
-        if (err.name === 'AbortError') {
-          console.error('Request timed out');
-        }
-        
-        // Vẫn hiển thị UI với dữ liệu mặc định
-        setUserData({
-          name: 'Student',
-          avatar: null
-        });
+        setUserData({ name: 'Student', avatar: null });
       }
     };
-    
+
     fetchUserData();
   }, []);
 
@@ -93,7 +80,7 @@ const Sidebar = () => {
         <div className="sidebar-avatar-name">{userData.name}</div>
       </div>
       <nav className="sidebar-nav">
-        {navItems.map((item, idx) => (
+        {navItems.map(item => (
           <div
             key={item.label}
             className={`sidebar-item${window.location.pathname === item.path ? ' active' : ''}`}

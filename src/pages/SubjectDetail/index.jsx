@@ -8,6 +8,7 @@ import './SubjectDetail.css';
 import ShowInClassForm from '../ShowInClassForm';
 import InClassFormContent from '../InClassForm';
 import axios from 'axios';
+import GoalCard from '../../components/goals/GoalCard';
 
 const SubjectDetail = () => {
   const { subjectId } = useParams();
@@ -19,26 +20,112 @@ const SubjectDetail = () => {
   const [activeTab, setActiveTab] = useState('goals');
   const [showInClassModal, setShowInClassModal] = useState(false);
   const [showSelfStudyModal, setShowSelfStudyModal] = useState(false);
+  const [classSubjectId, setClassSubjectId] = useState(null);
+  const [subjectInfo, setSubjectInfo] = useState(null);
   const studentId = 3;
+
+  const fetchSubjectDetail = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login to view subject details');
+        return;
+      }
+
+      console.log('Fetching subject detail for subjectId:', subjectId);
+
+      const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${subjectId}/detail`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch subject details');
+      }
+
+      const data = await response.json();
+      console.log('Subject detail response:', data);
+
+      if (data.success && data.data) {
+        setSubjectInfo(data.data);
+        setClassSubjectId(data.data.class_subject_id);
+        console.log('Set classSubjectId to:', data.data.class_subject_id);
+        return data.data.class_subject_id;
+      } else {
+        throw new Error('Invalid subject data');
+      }
+    } catch (error) {
+      console.error('Error fetching subject details:', error);
+      setError('Error loading subject details');
+      return null;
+    }
+  };
 
   const fetchGoals = async () => {
     try {
       setLoading(true);
       setError('');
-      const response = await getStudentSubjectGoals(studentId, subjectId);
-      if (response?.data && Array.isArray(response.data)) {
-        setGoals(response.data);
-      } else if (Array.isArray(response)) {
-        setGoals(response);
-      } else if (response?.goals && Array.isArray(response.goals)) {
-        setGoals(response.goals);
-      } else {
-        console.error('Data is not in array format:', response);
-        setGoals([]);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError('Please login to view goals');
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setError('Unable to load goals.');
-      console.error('Error fetching goals:', err);
+
+      // Lấy class_subject_id từ subject detail
+      const classSubjectId = await fetchSubjectDetail();
+      if (!classSubjectId) {
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching goals for class_subject:', classSubjectId);
+      
+      const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${classSubjectId}/goals`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('API Response status:', response.status);
+      const data = await response.json();
+      console.log('API Response data:', data);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError('Session expired. Please login again');
+          localStorage.removeItem('token');
+        } else {
+          setError(data.message || 'Failed to load goals');
+        }
+        setGoals([]);
+        return;
+      }
+
+      // Kiểm tra cấu trúc dữ liệu trả về
+      if (data.success && Array.isArray(data.data)) {
+        console.log('Setting goals:', data.data);
+        setGoals(data.data);
+      } else if (Array.isArray(data)) {
+        // Trường hợp API trả về trực tiếp mảng goals
+        console.log('Setting goals (direct array):', data);
+        setGoals(data);
+      } else if (data.goals && Array.isArray(data.goals)) {
+        // Trường hợp API trả về trong trường goals
+        console.log('Setting goals (from goals field):', data.goals);
+        setGoals(data.goals);
+      } else {
+        console.log('No valid goals data found in response');
+        setGoals([]);
+        setError('No goals found');
+      }
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+      setError('Error loading goals');
       setGoals([]);
     } finally {
       setLoading(false);
@@ -47,7 +134,12 @@ const SubjectDetail = () => {
 
   useEffect(() => {
     fetchGoals();
-  }, [subjectId, studentId]);
+  }, [subjectId]);
+
+  // Add useEffect to log classSubjectId changes
+  useEffect(() => {
+    console.log('classSubjectId changed:', classSubjectId);
+  }, [classSubjectId]);
 
   const semesterGoals = goals.filter(goal =>
     ['semester'].includes(goal.type || goal.goal_type || goal.goalType)
@@ -55,6 +147,14 @@ const SubjectDetail = () => {
 
   const weekGoals = goals.filter(goal =>
     ['weekly'].includes(goal.type || goal.goal_type || goal.goalType)
+  );
+
+  const monthlyGoals = goals.filter(goal =>
+    ['monthly'].includes(goal.type || goal.goal_type || goal.goalType)
+  );
+
+  const customGoals = goals.filter(goal =>
+    ['custom'].includes(goal.type || goal.goal_type || goal.goalType)
   );
 
   const inclassPlans = goals.filter(goal =>
@@ -65,7 +165,20 @@ const SubjectDetail = () => {
     ['self'].includes(goal.plan_type || goal.planType || goal.plan)
   );
 
-  const displayedGoals = goalType === 'semester' ? semesterGoals : weekGoals;
+  const displayedGoals = (() => {
+    switch (goalType) {
+      case 'semester':
+        return semesterGoals;
+      case 'weekly':
+        return weekGoals;
+      case 'monthly':
+        return monthlyGoals;
+      case 'custom':
+        return customGoals;
+      default:
+        return semesterGoals;
+    }
+  })();
 
   const handleGoalCreated = () => {
     fetchGoals();
@@ -124,6 +237,8 @@ const SubjectDetail = () => {
                   >
                     <option value="semester">Semester Goals</option>
                     <option value="weekly">Weekly Goals</option>
+                    <option value="monthly">Monthly Goals</option>
+                    <option value="custom">Custom Goals</option>
                   </select>
                   <button
                     onClick={() => setShowForm(true)}
@@ -140,11 +255,18 @@ const SubjectDetail = () => {
 
               {!loading && !error && (
                 <>
-                  <GoalSection
-                    title={goalType === 'semester' ? 'Semester Goals' : 'Weekly Goals'}
-                    items={displayedGoals}
-                    emptyMessage={`No ${goalType === 'semester' ? 'semester goals' : 'weekly goals'} available`}
-                  />
+                  <div className="subject-detail-goals">
+                    {Array.isArray(displayedGoals) && displayedGoals.map((goal, idx) => (
+                      <GoalCard key={goal.id || idx} goal={goal} />
+                    ))}
+                    {Array.isArray(displayedGoals) && displayedGoals.length === 0 && !loading && (
+                      <div className="subject-detail-empty">
+                        <div className="subject-detail-empty-text">
+                          No {goalType} goals available for this subject
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
             </>
@@ -156,10 +278,10 @@ const SubjectDetail = () => {
               <h2 className="subject-detail-title">In-class Learning Plans</h2>
               
               {/* Hiển thị bảng danh sách in-class plans */}
-              <ShowInClassForm subjectId={subjectId} />
+              <ShowInClassForm subjectId={classSubjectId} />
               
               <button
-                onClick={() => setShowInClassModal(true)} // Mở modal thay vì chuyển trang
+                onClick={() => setShowInClassModal(true)}
                 className="subject-detail-button"
               >
                 <span style={{ fontSize: '18px' }}>+</span>
@@ -203,13 +325,30 @@ const SubjectDetail = () => {
           )}
 
           {/* Modal cho Goal Form */}
-          {showForm && (
+          {showForm && classSubjectId && (
             <GoalForm
-              studentId={studentId}
-              subjectId={subjectId}
+              class_subject_id={classSubjectId}
               onClose={() => setShowForm(false)}
               onSuccess={handleGoalCreated}
             />
+          )}
+          {showForm && !classSubjectId && (
+            <div className="modal-overlay">
+              <div className="modal-container">
+                <div className="modal-header">
+                  <h2>Error</h2>
+                  <button 
+                    className="modal-close-button" 
+                    onClick={() => setShowForm(false)}
+                  >
+                    &times;
+                  </button>
+                </div>
+                <div className="modal-content">
+                  <p>Cannot create goal: Subject information is not loaded yet. Please try again.</p>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Modal cho In-class Form */}
@@ -227,7 +366,7 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <InClassFormModal 
-                    subjectId={subjectId} 
+                    subjectId={classSubjectId} 
                     onClose={() => setShowInClassModal(false)}
                     onSuccess={handleInClassFormSuccess}
                   />
@@ -251,7 +390,7 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <SelfStudyFormModal 
-                    subjectId={subjectId} 
+                    subjectId={classSubjectId} 
                     onClose={() => setShowSelfStudyModal(false)}
                     onSuccess={handleSelfStudyFormSuccess}
                   />
