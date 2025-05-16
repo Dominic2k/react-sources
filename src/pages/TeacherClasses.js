@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Sidebar, Header } from "../components/layout";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./TeacherClasses.css";
 
-const TeacherClasses = ({ }) => {
+const TeacherClasses = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
   const teacherId = 2;
+
   useEffect(() => {
     const fetchTeacherClasses = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/teacher/${teacherId}/classes`
-        );
+        const response = await axios.get(`http://127.0.0.1:8000/api/teacher/${teacherId}/classes`);
         setClasses(response.data.data);
       } catch (err) {
         setError("Failed to fetch classes.");
@@ -29,26 +30,20 @@ const TeacherClasses = ({ }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <main className="main-content" role="main" aria-label="My Teaching Classes">
+    <main className="main-content">
       <h2>My Teaching Classes</h2>
-      <section className="classes-grid" aria-label="List of teaching classes">
+      <section className="classes-grid">
         {classes.map((cls) => (
-          <article
-            key={cls.class_id}
-            className="class-card"
-            tabIndex="0"
-            aria-labelledby={`${cls.class_id}-title`}
-            aria-describedby={`${cls.class_id}-desc`}
-          >
-            <strong id={`${cls.class_id}-title`}>{cls.class_name}</strong>
-            <div className="class-info" id={`${cls.class_id}-desc`}>
+          <article key={cls.class_id} className="class-card">
+            <strong>{cls.class_name}</strong>
+            <div className="class-info">
               <i className="fas fa-users" aria-hidden="true"></i>{" "}
               {cls.student_count || 0} students
             </div>
             <button
               className="btn-details"
               type="button"
-              aria-label={`View details for ${cls.class_name}`}
+              onClick={() => navigate(`/teacher/class/${cls.class_id}/students`)}
             >
               View Details
             </button>

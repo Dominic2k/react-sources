@@ -20,7 +20,7 @@ const SubjectDetail = () => {
   const [activeTab, setActiveTab] = useState('goals');
   const [showInClassModal, setShowInClassModal] = useState(false);
   const [showSelfStudyModal, setShowSelfStudyModal] = useState(false);
-  const studentId = 3;
+  const studentId = 1;
  
 
   const fetchGoals = async () => {

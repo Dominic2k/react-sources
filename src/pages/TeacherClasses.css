@@ -68,3 +68,36 @@ body {
 .btn-details:hover {
   background-color: #2f3640;
 }
+
+
+/* List students */
+.class-student-list {
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+  border-radius: 6px;
+}
+
+.class-student-title {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.class-student-ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.class-student-item {
+  padding: 6px 0;
+  border-bottom: 1px dashed #ddd;
+  color: #333;
+}
+
+.class-student-empty {
+  color: #999;
+  font-style: italic;
+}

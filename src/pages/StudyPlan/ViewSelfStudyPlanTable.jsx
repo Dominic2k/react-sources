@@ -3,22 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
 
-const ViewSelfStudyPlan = ({selfId}) => {
+const ViewSelfStudyPlan = ({classSubjectId}) => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (selfId) {
+    if (classSubjectId) {
       fetchPlans();
     }
-  }, [selfId]);
+  }, [classSubjectId]);
 
  const fetchPlans = async () => {
   try {
     // const goalId = 1;
     // const selfId = 2;
-    const res = await axios.get(`http://127.0.0.1:8000/api/self-study-plans/goal/${selfId}`);
+    const res = await axios.get(`http://127.0.0.1:8000/api/self-study-plans/class-subject/${classSubjectId}`);
     setPlans(res.data);
   } catch (err) {
     console.error('Failed to fetch plans:', err);
