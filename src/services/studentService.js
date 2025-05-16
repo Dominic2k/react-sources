@@ -16,7 +16,8 @@ export const getStudentSubjects = async (studentId) => {
 // Lấy goals theo student_id và class_subject_id
 export const getStudentSubjectGoals = async (studentId, classSubjectId) => {
   try {
-    const res = await axios.get(`${API_BASE}/student/${studentId}/subject/${classSubjectId}/goals`);
+    // Sử dụng endpoint public để không cần xác thực
+    const res = await axios.get(`${API_BASE}/public/student/${studentId}/subject/${classSubjectId}/goals`);
     return res.data;
   } catch (error) {
     console.error('Error fetching student subject goals:', error);
@@ -24,21 +25,21 @@ export const getStudentSubjectGoals = async (studentId, classSubjectId) => {
   }
 };
 
-// Lấy goals theo class_id
-export const getGoalsByClass = async (classId) => {
+// Lấy chi tiết goal
+export const getGoalDetail = async (studentId, goalId) => {
   try {
-    const res = await axios.get(`${API_BASE}/class/${classId}/goals`);
+    const res = await axios.get(`${API_BASE}/public/student/${studentId}/goal/${goalId}`);
     return res.data;
   } catch (error) {
-    console.error('Error fetching class goals:', error);
+    console.error('Error fetching goal detail:', error);
     throw error;
   }
 };
 
 // Tạo goal mới
-export const createGoal = async (goalData) => {
+export const createGoal = async (studentId, classSubjectId, goalData) => {
   try {
-    const res = await axios.post(`${API_BASE}/goals`, goalData);
+    const res = await axios.post(`${API_BASE}/public/student/${studentId}/subject/${classSubjectId}/goals`, goalData);
     return res.data;
   } catch (error) {
     console.error('Error creating goal:', error);
@@ -47,9 +48,9 @@ export const createGoal = async (goalData) => {
 };
 
 // Cập nhật goal
-export const updateGoal = async (goalId, goalData) => {
+export const updateGoal = async (studentId, goalId, goalData) => {
   try {
-    const res = await axios.put(`${API_BASE}/goals/${goalId}`, goalData);
+    const res = await axios.put(`${API_BASE}/public/student/${studentId}/goal/${goalId}`, goalData);
     return res.data;
   } catch (error) {
     console.error('Error updating goal:', error);
@@ -58,9 +59,9 @@ export const updateGoal = async (goalId, goalData) => {
 };
 
 // Xóa goal
-export const deleteGoal = async (goalId) => {
+export const deleteGoal = async (studentId, goalId) => {
   try {
-    const res = await axios.delete(`${API_BASE}/goals/${goalId}`);
+    const res = await axios.delete(`${API_BASE}/public/student/${studentId}/goal/${goalId}`);
     return res.data;
   } catch (error) {
     console.error('Error deleting goal:', error);

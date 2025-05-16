@@ -2,7 +2,7 @@
 .achievement-container {
   display: flex;
   flex-direction: row;
-  gap: 30px;
+  /* gap: 30px; */
   margin: 0 auto;
   padding: 0;
   min-height: 100vh;
@@ -20,11 +20,11 @@
 
 .achievement-header {
   text-align: center;
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
   background-image: url('https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/05/anh-mau-xanh-duong-42.jpg');
   background-size: cover;
   background-position: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   border-radius: 12px;
   color: white;
  
@@ -131,7 +131,7 @@
 }
 
 .image-preview-container {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   text-align: center;
   width: 100%;
   height: 350px;

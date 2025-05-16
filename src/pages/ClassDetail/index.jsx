@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
-import { getGoalsByClass } from '../../services/studentService';
+import { getStudentSubjectGoals } from '../../services/studentService';
 import './ClassDetail.css';
 
 const ClassDetail = () => {
@@ -9,22 +9,39 @@ const ClassDetail = () => {
   const [goals, setGoals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Hardcoded student ID - bạn có thể lấy từ localStorage hoặc context
+  const studentId = 3;
 
   useEffect(() => {
     const fetchGoals = async () => {
       try {
         setLoading(true);
         setError('');
-        const data = await getGoalsByClass(classId);
-        setGoals(data);
+        // Sử dụng classId như class_subject_id
+        const response = await getStudentSubjectGoals(studentId, classId);
+        
+        // Kiểm tra cấu trúc dữ liệu trả về
+        if (response?.data && Array.isArray(response.data)) {
+          setGoals(response.data);
+        } else if (Array.isArray(response)) {
+          setGoals(response);
+        } else if (response?.goals && Array.isArray(response.goals)) {
+          setGoals(response.goals);
+        } else {
+          console.error('Data is not in array format:', response);
+          setGoals([]);
+        }
       } catch (err) {
         setError('Unable to load goals.');
+        console.error('Error fetching goals:', err);
+        setGoals([]);
       } finally {
         setLoading(false);
       }
     };
     fetchGoals();
-  }, [classId]);
+  }, [classId, studentId]);
 
   return (
     <div className="class-detail-container">
@@ -37,7 +54,7 @@ const ClassDetail = () => {
           {error && <div className="class-detail-error">{error}</div>}
           <ul>
             {goals.map(goal => (
-              <li key={goal.id}>
+              <li key={goal.id || Math.random()}>
                 <strong>{goal.title}</strong> - {goal.status}
               </li>
             ))}
