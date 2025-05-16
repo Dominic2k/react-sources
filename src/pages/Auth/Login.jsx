@@ -32,13 +32,22 @@ function LoginForm() {
         });
 
         const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        navigate("/home"); // Ví dụ chuyển trang
+        console.log('Login response:', data); // Log response để debug
 
         if (!response.ok) {
             throw new Error(data.message || 'Đăng nhập thất bại');
         }
 
+        // Lưu token và user_id
+        localStorage.setItem('token', data.access_token);
+        if (data.user && data.user.id) {
+            localStorage.setItem('user_id', data.user.id);
+            console.log('Stored user_id:', data.user.id); // Log để debug
+        } else {
+            console.warn('No user_id in response:', data); // Log warning nếu không có user_id
+        }
+
+        navigate("/home");
     } catch (err) {
         setError(err.message);
     }

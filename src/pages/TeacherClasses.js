@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./TeacherClasses.css";
 
 const TeacherClasses = () => {
+  // const [teacherId] = useParams();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,10 +14,13 @@ const TeacherClasses = () => {
   const teacherId = 2;
 
   useEffect(() => {
+    if (!teacherId) return; // phòng trường hợp teacherId chưa có
+
     const fetchTeacherClasses = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/teacher/${teacherId}/classes`);
         setClasses(response.data.data);
+
       } catch (err) {
         setError("Failed to fetch classes.");
       } finally {
@@ -33,7 +38,8 @@ const TeacherClasses = () => {
     <main className="main-content">
       <h2>My Teaching Classes</h2>
       <section className="classes-grid">
-        {classes.map((cls) => (
+        {Array.isArray(classes) &&
+          classes.map((cls) => (
           <article key={cls.class_id} className="class-card">
             <strong>{cls.class_name}</strong>
             <div className="class-info">
