@@ -3,19 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
 
-const ViewSelfStudyPlan = () => {
+const ViewSelfStudyPlan = ({selfId}) => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPlans();
-  }, []);
+    if (selfId) {
+      fetchPlans();
+    }
+  }, [selfId]);
 
  const fetchPlans = async () => {
   try {
-    const goalId = 1;
-    const res = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
+    // const goalId = 1;
+    // const selfId = 2;
+    const res = await axios.get(`http://127.0.0.1:8000/api/self-study-plans/goal/${selfId}`);
     setPlans(res.data);
   } catch (err) {
     console.error('Failed to fetch plans:', err);
@@ -73,18 +76,37 @@ const ViewSelfStudyPlan = () => {
           {selectedPlan && (
             <div className="plan-detail">
               <h3>📄 Study Plan Detail</h3>
-              <table className="detail-table">
+              <table className="detail-table" style={{ borderCollapse: "collapse", width: "100%" }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#b90e32', color: 'white', textAlign: 'center' }}>
+                    <th colSpan="8">In-class</th>
+                  </tr>
+                  <tr style={{ backgroundColor: '#f1f1f1', fontWeight: 'bold', textAlign: 'center' }}>
+                    <th>Date</th>
+                    <th>Module</th>
+                    <th>Lesson</th>
+                    <th>Time</th>
+                    <th>Resources</th>
+                    <th>Activities</th>
+                    <th>Concentration</th>
+                    <th>Plan Follow</th>
+                    <th>Evaluation</th>
+                    <th>Reinforcing</th>
+                  </tr>
+                  </thead>
                 <tbody>
-                  <tr><th>Date</th><td>{selectedPlan.date}</td></tr>
-                  <tr><th>Module</th><td>{selectedPlan.class_name}</td></tr>
-                  <tr><th>Lesson</th><td>{selectedPlan.lesson}</td></tr>
-                  <tr><th>Time</th><td>{selectedPlan.time}</td></tr>
-                  <tr><th>Resources</th><td>{selectedPlan.resources}</td></tr>
-                  <tr><th>Activities</th><td>{selectedPlan.activities}</td></tr>
-                  <tr><th>Concentration</th><td>{selectedPlan.concentration}</td></tr>
-                  <tr><th>Plan Follow</th><td>{selectedPlan.plan_follow}</td></tr>
-                  <tr><th>Evaluation</th><td>{selectedPlan.evaluation}</td></tr>
-                  <tr><th>Reinforcing</th><td>{selectedPlan.reinforcing}</td></tr>
+                  <tr  style={{ textAlign: 'center' }}>
+                  <td>{selectedPlan.date}</td>
+                  <td>{selectedPlan.class_name}</td>
+                  <td>{selectedPlan.lesson}</td>
+                  <td>{selectedPlan.time}</td>
+                  <td>{selectedPlan.resources}</td>
+                  <td>{selectedPlan.activities}</td>
+                  <td>{selectedPlan.concentration}</td>
+                  <td>{selectedPlan.plan_follow}</td>
+                  <td>{selectedPlan.evaluation}</td>
+                  <td>{selectedPlan.reinforcing}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -96,3 +118,4 @@ const ViewSelfStudyPlan = () => {
 };
 
 export default ViewSelfStudyPlan;
+

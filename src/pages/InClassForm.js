@@ -16,8 +16,10 @@ function InClassForm() {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const subjectId = queryParams.get('subjectId');
+  
 
   const handleReset = () => {
+    setDate('');
     setDate('');
     setModule('IT English');
     setLesson('');
@@ -30,11 +32,14 @@ function InClassForm() {
   const handleSave = async () => {
     const data = {
       date, 
+      date, 
       skills_module: module,
       lesson_summary: lesson,
       self_assessment: difficultyLevel,
       difficulties_faced: difficulties,
       improvement_plan: plan,
+      problem_solved: solved === 'Yes' ? 1 : 0, // Chuyển thành 1/0 để phù hợp với ShowInClassForm
+      subject_id: subjectId,
       problem_solved: solved === 'Yes',
       subject_id: subjectId // Thêm subject_id vào payload
     };
@@ -61,6 +66,11 @@ function InClassForm() {
       if (subjectId) {
         navigate(`/subject/${subjectId}`);
       }
+      
+      // Quay lại trang subject detail nếu có subjectId
+      if (subjectId) {
+        navigate(`/subject/${subjectId}`);
+      }
     } catch (error) {
       console.error('Error saving entry:', error);
       alert('Failed to save entry.');
@@ -72,6 +82,11 @@ function InClassForm() {
       <h2 className="title">IN-CLASS PLAN</h2>
 
       <form className="journal-form">
+        <div className="form-group">
+          <label>Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        </div>
+
         <div className="form-group">
           <label>Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
@@ -126,6 +141,11 @@ function InClassForm() {
               Back to Subject
             </button>
           )}
+          {subjectId && (
+            <button type="button" onClick={() => navigate(`/subject/${subjectId}`)} className="back-button">
+              Back to Subject
+            </button>
+          )}
         </div>
       </form>
     </div>
@@ -133,3 +153,4 @@ function InClassForm() {
 }
 
 export default InClassForm;
+
