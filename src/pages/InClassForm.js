@@ -28,6 +28,12 @@ function InClassForm() {
   };
 
   const handleSave = async () => {
+    // Kiểm tra trường bắt buộc
+    if (!date) {
+      alert('Please select a date');
+      return;
+    }
+
     const data = {
       date, 
       skills_module: module,
@@ -35,9 +41,11 @@ function InClassForm() {
       self_assessment: difficultyLevel,
       difficulties_faced: difficulties,
       improvement_plan: plan,
-      problem_solved: solved === 'Yes' ? 1 : 0, // Chuyển thành 1/0 để phù hợp với ShowInClassForm
+      problem_solved: solved === 'Yes' ? 1 : 0,
       subject_id: subjectId
     };
+
+    console.log('Sending data:', data); // Log dữ liệu gửi đi
 
     try {
       const response = await fetch('http://127.0.0.1:8000/api/in-class-plans', {
@@ -50,7 +58,9 @@ function InClassForm() {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        console.error('Server response:', response.status, errorText);
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
@@ -63,7 +73,7 @@ function InClassForm() {
       }
     } catch (error) {
       console.error('Error saving entry:', error);
-      alert('Failed to save entry.');
+      alert(`Failed to save entry: ${error.message}`);
     }
   };
 
@@ -87,7 +97,7 @@ function InClassForm() {
         </div>
 
         <div className="form-group">
-          <label>My lesson – What did I learn?</label>
+          <label>My lesson - What did I learn?</label>
           <input type="text" value={lesson} onChange={(e) => setLesson(e.target.value)} />
         </div>
 

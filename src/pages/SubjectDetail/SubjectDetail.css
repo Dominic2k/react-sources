@@ -1,7 +1,6 @@
 .subject-detail-container {
   display: flex;
   min-height: 100vh;
-  background: #f7fafd;
 }
 
 .subject-detail-main {
@@ -11,9 +10,40 @@
 }
 
 .subject-detail-content {
+  padding: 24px;
   flex: 1;
+}
+
+.subject-detail-heading {
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.subject-detail-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subject-detail-error {
+  color: #dc3545;
+  padding: 12px;
+  background: #f8d7da;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.subject-detail-empty {
+  text-align: center;
   padding: 32px;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.subject-detail-empty-text {
+  color: #6c757d;
+  font-size: 1.1rem;
 }
 
 .subject-detail-header {
@@ -61,14 +91,6 @@
   padding: 32px;
   font-size: 18px;
   color: #666;
-}
-
-.subject-detail-error {
-  color: #fff;
-  background: #F44336;
-  padding: 12px 16px;
-  border-radius: 4px;
-  margin: 16px 0;
 }
 
 /* Tab Navigation Styles */

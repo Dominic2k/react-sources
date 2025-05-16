@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Sidebar, Header } from '../../components/layout';
 import ClassCard from '../../components/ui/ClassCard';
-import { getStudentSubjects } from '../../services/studentService';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
@@ -11,34 +10,55 @@ const Home = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const studentId = 3;
-
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const data = await getStudentSubjects(studentId);
-        if (Array.isArray(data)) {
-          setSubjects(data);
-        } else if (data && Array.isArray(data.data)) {
-          setSubjects(data.data);
-        } else if (data && Array.isArray(data.subjects)) {
-          setSubjects(data.subjects);
-        } else {
-          console.error('Data is not in array format:', data);
-          setSubjects([]);
-        }
-      } catch (err) {
-        setError('Unable to load subject list.');
-        console.error('Error fetching subjects:', err);
-        setSubjects([]);
-      } finally {
+useEffect(() => {
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login to view your subjects');
         setLoading(false);
+        return;
       }
-    };
-    fetchSubjects();
-  }, [studentId]);
+
+      const response = await fetch('http://localhost:8000/api/student/subjects', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError('Session expired. Please login again');
+          localStorage.removeItem('token');
+          // You might want to redirect to login page here
+          // navigate('/login');
+        } else {
+          setError('Failed to load subjects');
+        }
+        setSubjects([]);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        setSubjects(data.data);
+      } else {
+        setSubjects([]);
+        setError('No subjects found');
+      }
+    } catch (error) {
+      setError('Error loading subjects');
+      setSubjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchSubjects();
+}, []);
+
 
   return (
     <div className="home-container">
