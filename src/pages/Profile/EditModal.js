@@ -26,10 +26,11 @@ const EditModal = ({ data, onClose, onSave }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/students/2/profile', {
+      const response = await fetch('http://localhost:8000/api/student/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify(payload),
       });
