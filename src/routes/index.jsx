@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 const AppRoutes = () => (
 
   <Routes>
-    <Route path='/studentProfile' element={<StudentProfile/>}/>
+    <Route path='student/profile' element={<StudentProfile/>}/>
 
     <Route path="/" element={<Home />} />
     <Route path="/home" element={<Home />} />
