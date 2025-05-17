@@ -19,8 +19,12 @@ const StudentProfile = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
-      const res = await fetch(`http://localhost:8000/api/students/${id}/profile`, {
-        signal: controller.signal
+      const res = await fetch(`http://localhost:8000/api/student/profile`, {
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
       });
       
       clearTimeout(timeoutId);
