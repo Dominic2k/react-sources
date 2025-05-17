@@ -11,6 +11,7 @@ import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import StudentProfile from '../pages/Profile/StudentProfile';
 
 import LoginForm from '../pages/Auth/Login';
+import Logout from '../pages/Auth/Logout';
 import { useNavigate } from 'react-router-dom';
 
 const AppRoutes = () => (
@@ -22,6 +23,7 @@ const AppRoutes = () => (
     <Route path="/home" element={<Home />} />
 
     <Route path="/login" element={<LoginForm />} />
+    <Route path="/logout" element={<Logout />} />
 
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
