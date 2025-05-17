@@ -5,8 +5,8 @@ import { getStudentSubjectGoals } from '../../services/studentService';
 import GoalSection from '../../components/goals/GoalSection';
 import GoalForm from '../../components/goals/GoalForm';
 import './SubjectDetail.css';
-import ShowInClassForm from '../ShowInClassForm';
-import InClassFormContent from '../InClassForm';
+import ShowInClassForm from '../InClassPlan/ShowInClassForm';
+import InClassFormContent from '../InClassPlan/InClassForm';
 import axios from 'axios';
 import GoalCard from '../../components/goals/GoalCard';
 
@@ -199,9 +199,9 @@ const SubjectDetail = () => {
   return (
     <div className="subject-detail-container">
       <Sidebar />
-      <div className="subject-detail-main">
+      <div className="main-content">
         <Header />
-        <main className="subject-detail-content">
+        <div className="subject-content">
           {/* Navigation menu */}
           <div className="subject-nav-tabs">
             <button 
@@ -398,7 +398,7 @@ const SubjectDetail = () => {
               </div>
             </div>
           )}
-        </main>
+        </div>
       </div>
     </div>
   );
