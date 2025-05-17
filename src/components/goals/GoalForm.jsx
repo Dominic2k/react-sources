@@ -1,42 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { createGoal, updateGoal } from '../../services/studentService';
 
-const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEditing }) => {
+const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    goal_type: 'semester',
-    start_date: '',
-    end_date: '',
-    status: 'not_started',
+    goalType: 'semester',
+    startDate: '',
+    endDate: '',
     priority: 'high',
-    is_private: false,
+    isPrivate: false
   });
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  // Nếu có initialData (đang edit), điền dữ liệu vào form
+  // Log localStorage values when component mounts
   useEffect(() => {
-    if (initialData) {
-      // Chuyển đổi định dạng dữ liệu nếu cần
-      const startDate = initialData.start_date ? 
-        new Date(initialData.start_date).toISOString().split('T')[0] : '';
-      const endDate = initialData.end_date ? 
-        new Date(initialData.end_date).toISOString().split('T')[0] : '';
-      
-      setFormData({
-        title: initialData.title || '',
-        description: initialData.description || '',
-        goal_type: initialData.goal_type || initialData.type || 'semester',
-        start_date: startDate,
-        end_date: endDate,
-        status: initialData.status || 'not_started',
-        priority: initialData.priority || 'high',
-        is_private: initialData.is_private || false,
-      });
-    }
-  }, [initialData]);
+    console.log('LocalStorage values:');
+    console.log('token:', localStorage.getItem('token'));
+    console.log('user_id:', localStorage.getItem('user_id'));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,17 +34,18 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
     setFormError('');
     setFormSuccess('');
 
+    // Validate required fields
     if (!formData.title.trim()) {
       setFormError('Vui lòng nhập tiêu đề.');
       return;
     }
 
-    if (!formData.start_date || !formData.end_date) {
+    if (!formData.startDate || !formData.endDate) {
       setFormError('Vui lòng nhập ngày bắt đầu và kết thúc.');
       return;
     }
 
-    if (new Date(formData.end_date) < new Date(formData.start_date)) {
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
       setFormError('Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.');
       return;
     }
@@ -69,52 +53,93 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
     try {
       setFormLoading(true);
       
-      // Đảm bảo dữ liệu gửi đi đúng định dạng
-      const payload = {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('user_id');
+
+      console.log('Class Subject ID:', class_subject_id);
+
+      if (!token) {
+        console.log('No token found');
+        setFormError('Vui lòng đăng nhập để tạo goal.');
+        return;
+      }
+
+      if (!userId) {
+        console.log('No user_id found');
+        setFormError('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
+        window.location.href = '/login';
+        return;
+      }
+
+      // Prepare request data
+      const requestData = {
         title: formData.title,
         description: formData.description,
-        goal_type: formData.goal_type,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-        status: formData.status,
+        goal_type: formData.goalType,
+        start_date: formData.startDate,
+        end_date: formData.endDate,
         priority: formData.priority,
-        is_private: formData.is_private
+        is_private: formData.isPrivate,
+        class_subject_id: class_subject_id,
+        student_id: userId,
+        status: 'not_started'
       };
-      
-      let response;
-      
-      if (isEditing) {
-        // Nếu đang edit, gọi API update
-        const goalId = initialData.id || initialData.goal_id;
-        console.log('Updating goal:', { goalId, data: payload });
-        response = await updateGoal(studentId, goalId, payload);
-      } else {
-        // Nếu đang tạo mới, gọi API create
-        console.log('Creating goal:', { studentId, subjectId, data: payload });
-        response = await createGoal(studentId, subjectId, payload);
+
+      console.log('Request data:', requestData);
+
+      const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${class_subject_id}/goals`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      const data = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response data:', data);
+
+      if (!response.ok) {
+        // Xử lý các loại lỗi cụ thể
+        if (data.message === 'Student not found') {
+          console.log('Student not found error');
+          setFormError('Không tìm thấy thông tin sinh viên. Vui lòng đăng nhập lại.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user_id');
+          window.location.href = '/login';
+        } else if (response.status === 401) {
+          console.log('Unauthorized error');
+          setFormError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user_id');
+          window.location.href = '/login';
+        } else if (response.status === 422) {
+          // Validation errors
+          const errors = data.errors || {};
+          console.log('Validation errors:', errors);
+          const errorMessages = Object.values(errors).flat();
+          setFormError(errorMessages.join(', ') || 'Dữ liệu không hợp lệ');
+        } else if (response.status === 404) {
+          setFormError('Không tìm thấy môn học. Vui lòng thử lại sau.');
+        } else {
+          console.error('Error response:', data);
+          setFormError(data.message || 'Có lỗi xảy ra khi tạo goal');
+        }
+        return;
       }
+
+      console.log('Goal created successfully:', data);
       
-      console.log('API response:', response);
-      
-      setFormSuccess(isEditing ? 'Cập nhật goal thành công!' : 'Tạo goal thành công!');
+      setFormSuccess('Tạo goal thành công!');
       onSuccess();
       setTimeout(() => onClose(), 1000);
     } catch (err) {
-      console.error('Error saving goal:', err);
-      
-      if (err.response) {
-        console.error('Error response:', {
-          data: err.response.data,
-          status: err.response.status,
-          headers: err.response.headers
-        });
-        setFormError(`Lỗi (${err.response.status}): ${err.response.data?.message || JSON.stringify(err.response.data)}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setFormError('Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối mạng.');
-      } else {
-        setFormError(`Lỗi: ${err.message}`);
-      }
+      console.error('Error creating goal:', err);
+      setFormError('Có lỗi xảy ra khi tạo goal. Vui lòng thử lại sau.');
     } finally {
       setFormLoading(false);
     }
@@ -124,7 +149,7 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
     <div style={overlayStyle}>
       <div style={formWrapperStyle}>
         <div style={headerStyle}>
-          <h2 style={{ margin: 0 }}>{isEditing ? 'Chỉnh sửa Goal' : 'Tạo Goal'}</h2>
+          <h2 style={{ margin: 0 }}>Tạo Goal Mới</h2>
           <button onClick={onClose} style={closeBtnStyle}>&times;</button>
         </div>
 
@@ -134,18 +159,36 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
             <label style={labelStyle}>Tiêu đề *</label>
-            <input type="text" name="title" value={formData.title} onChange={handleChange} style={inputStyle} required />
+            <input 
+              type="text" 
+              name="title" 
+              value={formData.title} 
+              onChange={handleChange} 
+              style={inputStyle} 
+              required 
+            />
           </div>
 
           <div>
             <label style={labelStyle}>Mô tả</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} style={{ ...inputStyle, minHeight: '80px' }} />
+            <textarea 
+              name="description" 
+              value={formData.description} 
+              onChange={handleChange} 
+              style={{ ...inputStyle, minHeight: '80px' }} 
+            />
           </div>
 
           <div style={grid2Cols}>
             <div>
               <label style={labelStyle}>Loại mục tiêu *</label>
-              <select name="goal_type" value={formData.goal_type} onChange={handleChange} style={inputStyle}>
+              <select 
+                name="goalType" 
+                value={formData.goalType} 
+                onChange={handleChange} 
+                style={inputStyle}
+                required
+              >
                 <option value="semester">Học kỳ</option>
                 <option value="weekly">Hàng tuần</option>
                 <option value="monthly">Hàng tháng</option>
@@ -154,7 +197,13 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
             </div>
             <div>
               <label style={labelStyle}>Mức độ ưu tiên *</label>
-              <select name="priority" value={formData.priority} onChange={handleChange} style={inputStyle}>
+              <select 
+                name="priority" 
+                value={formData.priority} 
+                onChange={handleChange} 
+                style={inputStyle}
+                required
+              >
                 <option value="high">Cao</option>
                 <option value="medium">Trung bình</option>
                 <option value="low">Thấp</option>
@@ -166,35 +215,38 @@ const GoalForm = ({ studentId, subjectId, onClose, onSuccess, initialData, isEdi
           <div style={grid2Cols}>
             <div>
               <label style={labelStyle}>Ngày bắt đầu *</label>
-              <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} style={inputStyle} required />
+              <input 
+                type="date" 
+                name="startDate" 
+                value={formData.startDate} 
+                onChange={handleChange} 
+                style={inputStyle} 
+                required 
+              />
             </div>
             <div>
               <label style={labelStyle}>Ngày kết thúc *</label>
-              <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} style={inputStyle} required />
+              <input 
+                type="date" 
+                name="endDate" 
+                value={formData.endDate} 
+                onChange={handleChange} 
+                style={inputStyle} 
+                required 
+              />
             </div>
-          </div>
-
-          <div>
-            <label style={labelStyle}>Trạng thái *</label>
-            <select name="status" value={formData.status} onChange={handleChange} style={inputStyle}>
-              <option value="not_started">Chưa bắt đầu</option>
-              <option value="in_progress">Đang thực hiện</option>
-              <option value="completed">Đã hoàn thành</option>
-              <option value="failed">Thất bại</option>
-              <option value="archived">Lưu trữ</option>
-            </select>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <input 
               type="checkbox" 
-              id="is_private" 
-              name="is_private" 
-              checked={formData.is_private} 
+              id="isPrivate" 
+              name="isPrivate" 
+              checked={formData.isPrivate} 
               onChange={handleChange} 
               style={{ width: '20px', height: '20px' }} 
             />
-            <label htmlFor="is_private" style={{ cursor: 'pointer' }}>Riêng tư (chỉ bạn mới nhìn thấy)</label>
+            <label htmlFor="isPrivate" style={{ cursor: 'pointer' }}>Riêng tư (chỉ bạn mới nhìn thấy)</label>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>

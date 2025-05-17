@@ -1,0 +1,103 @@
+    @keyframes boder-change-color {
+        0% {
+            border-top-color: #6cb9e5;
+            border-right-color: #6cb9e5;
+            border-bottom-color: orange;
+            border-left-color: orange;
+        }
+        100% {
+            border-top-color: orange;
+            border-right-color: orange;
+            border-bottom-color: #6cb9e5;
+            border-left-color: #6cb9e5;
+        }
+    }
+    
+    @keyframes color-change {
+        0% {
+            color: orange;
+        }
+        100% {
+            color: #6cb9e5;
+            ;
+        }
+    }
+    
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+    }
+    
+    .login-button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .login-outside {
+        width: 40vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 10px solid black;
+        border-top-color: orange;
+        border-right-color: orange;
+        border-bottom-color: blue;
+        border-left-color: blue;
+        animation: boder-change-color;
+        animation-duration: 10s;
+        animation-direction: alternate-reverse;
+        animation-iteration-count: infinite;
+    }
+    
+    .login-input-icon>input {
+        width: 25vw;
+        margin-top: 8px;
+        height: 1.5vw;
+    }
+    
+    .login-outside h1 {
+        color: #6cb9e5;
+        margin: 5vh;
+        text-align: center;
+        animation: color-change;
+        animation-duration: 10s;
+        animation-direction: alternate-reverse;
+        animation-iteration-count: infinite;
+    }
+    
+    .login-button {
+        width: 15vw;
+        height: 5vh;
+        margin: 5vh;
+        background-color: orange;
+        border-color: orange;
+    }
+    
+    .login-input>label {
+        color: #6cb9e5;
+    }
+    
+    .login-input-icon {
+        position: relative;
+        width: max-content;
+    }
+    
+    .login-input-icon input {
+        padding-left: 30px;
+    }
+    
+    .login-input-icon i {
+        position: absolute;
+        top: 60%;
+        left: 10px;
+        transform: translateY(-50%);
+        color: #888;
+    }
+    
+    .login-span {
+        font-size: 13px;
+        margin-top: 10px;
+    }

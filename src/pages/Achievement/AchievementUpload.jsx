@@ -57,40 +57,82 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
     maxFiles: 1
   });
 
+  // const handleSubmit = async () => {
+  //   setError('');
+
+  //   if (!image || !title || !description || !classSubjectId || !achievementDate || !semester) {
+  //     setError('Please fill in all fields and upload an image.');
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append('file', image); 
+  //   formData.append('title', title);
+  //   formData.append('description', description);
+  //   formData.append('class_subject_id', classSubjectId);
+  //   formData.append('achievement_date', achievementDate);
+  //   formData.append('semester', semester);
+
+  //   try {
+  //     const response = await fetch('http://127.0.0.1:8000/api/achievements', {
+  //       method: 'POST',
+  //       body: formData
+  //     });
+
+  //     if (!response.ok) {
+  //       const resData = await response.json();
+  //       throw new Error(resData.message || 'Something went wrong!');
+  //     }
+
+  //     const result = await response.json();
+  //     onSubmit(result);
+  //     onClose();
+  //   } catch (err) {
+  //     setError(err.message || 'Upload failed.');
+  //   }
+  // };
   const handleSubmit = async () => {
-    setError('');
+  setError('');
 
-    if (!image || !title || !description || !classSubjectId || !achievementDate || !semester) {
-      setError('Please fill in all fields and upload an image.');
-      return;
+  if (!image || !title || !description || !classSubjectId || !achievementDate || !semester) {
+    setError('Please fill in all fields and upload an image.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', image);
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('class_subject_id', classSubjectId);
+  formData.append('achievement_date', achievementDate);
+  formData.append('semester', semester);
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/achievements', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json'
+      },
+      body: formData
+    });
+
+    const contentType = response.headers.get('Content-Type');
+
+    if (!response.ok) {
+      const errorData = contentType.includes('application/json')
+        ? await response.json()
+        : await response.text();
+      throw new Error(errorData.message || 'Something went wrong!');
     }
 
-    const formData = new FormData();
-    formData.append('file', image); 
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('class_subject_id', classSubjectId);
-    formData.append('achievement_date', achievementDate);
-    formData.append('semester', semester);
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/achievements', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        const resData = await response.json();
-        throw new Error(resData.message || 'Something went wrong!');
-      }
-
-      const result = await response.json();
-      onSubmit(result);
-      onClose();
-    } catch (err) {
-      setError(err.message || 'Upload failed.');
-    }
-  };
+    const result = await response.json();
+    onSubmit(result);
+    onClose();
+  } catch (err) {
+    setError(err.message || 'Upload failed.');
+  }
+};
+          
 
   if (!isOpen) return null;
 
