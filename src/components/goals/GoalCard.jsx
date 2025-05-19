@@ -1,7 +1,7 @@
 import React from 'react';
 import './GoalCard.css';
 
-const GoalCard = ({ goal }) => {
+const GoalCard = ({ goal, onEdit }) => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'completed':
@@ -37,9 +37,9 @@ const GoalCard = ({ goal }) => {
       </div>
       <p className="goal-description">{goal.description}</p>
       <div className="goal-footer">
-        <span>Type: {goal.type === 'semester' ? 'Semester' : 'Week'}</span>
-        <span>Plan: {goal.plan_type === 'inclass' ? 'In class' : 'Self study'}</span>
+        <span>Type: {goal.goal_type === 'semester' ? 'Semester' : 'Weekly'}</span>
         {goal.deadline && <span>Deadline: {new Date(goal.deadline).toLocaleDateString()}</span>}
+        <button onClick={() => onEdit(goal)} className="goal-edit-btn">Edit</button>
       </div>
     </div>
   );
