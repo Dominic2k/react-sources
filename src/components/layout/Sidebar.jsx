@@ -55,7 +55,7 @@ const Sidebar = () => {
   ];
 
   const handleProfileClick = () => {
-    navigate('student/profile');
+    navigate('/student/profile');
   };
   const handleLogout = () => {
     localStorage.removeItem('token');
