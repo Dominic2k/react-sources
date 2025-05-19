@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -12,38 +13,32 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
         const token = localStorage.getItem('token');
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
 
-        const res = await fetch('http://localhost:8000/api/user', {
-          signal: controller.signal,
+        const response = await axios.get('http://127.0.0.1:8000/api/student/profile', {
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
         });
 
-        clearTimeout(timeoutId);
+        console.log('Profile response:', response.data);
 
-        if (!res.ok) {
-          throw new Error(`Server responded with status: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (data.success && data.data.user) {
-          const user = data.data.user;
+        if (response.data.success && response.data.data) {
+          const profileData = response.data.data;
           setUserData({
-            name: user.full_name || 'Student',
-            avatar: user.avatar_url || null
+            name: profileData.full_name || 'Student',
+            avatar: profileData.avatar_url || null
           });
         } else {
+          console.warn('Invalid profile data format:', response.data);
           setUserData({ name: 'Student', avatar: null });
         }
       } catch (err) {
-        console.error('Failed to fetch user data:', err);
+        console.error('Failed to fetch profile:', err);
         setUserData({ name: 'Student', avatar: null });
       }
     };
@@ -61,6 +56,12 @@ const Sidebar = () => {
 
   const handleProfileClick = () => {
     navigate('student/profile');
+  };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    navigate('/login');
+
   };
 
   return (
@@ -84,7 +85,7 @@ const Sidebar = () => {
           <div
             key={item.label}
             className={`sidebar-item${window.location.pathname === item.path ? ' active' : ''}`}
-            onClick={() => navigate(item.path)}
+            onClick={() => item.path === '/logout' ? handleLogout() : navigate(item.path)}
             style={{ cursor: 'pointer' }}
           >
             <span style={{ fontSize: 20 }}>{item.icon}</span>
