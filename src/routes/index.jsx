@@ -11,6 +11,7 @@ import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import StudentProfile from '../pages/Profile/StudentProfile';
 
 import LoginForm from '../pages/Auth/Login';
+import Logout from '../pages/Auth/Logout';
 import { useNavigate } from 'react-router-dom';
 
 const AppRoutes = () => (
@@ -22,22 +23,16 @@ const AppRoutes = () => (
     <Route path="/home" element={<Home />} />
 
     <Route path="/login" element={<LoginForm />} />
+    <Route path="/logout" element={<Logout />} />
 
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
-    <Route path="/about" element={<About />} />
-
-
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
-      
-
     <Route path="/self-study-plans/:className/:goalId" element={<SelfStudyPlan />} />
     <Route path="/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
     <Route path="/self-study/:className" element={<SelfStudyPlan />} />
-
     <Route path="/in-class-form" element={<InClassForm />} />
-
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
 
   </Routes>
