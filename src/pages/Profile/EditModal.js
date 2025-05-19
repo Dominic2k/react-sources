@@ -35,16 +35,17 @@ const EditModal = ({ data, onClose, onSave }) => {
     };
 
     try {
+      const response = await fetch('http://localhost:8000/api/student/profile', {
+
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('No token found');
       }
-
-      const response = await fetch('http://127.0.0.1:8000/api/student/profile', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify(payload),
       });

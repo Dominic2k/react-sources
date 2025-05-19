@@ -55,13 +55,13 @@ const Sidebar = () => {
   ];
 
   const handleProfileClick = () => {
-    navigate('/studentProfile');
+    navigate('student/profile');
   };
-
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user_id');
     navigate('/login');
+
   };
 
   return (
