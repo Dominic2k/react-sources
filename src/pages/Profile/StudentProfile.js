@@ -13,20 +13,30 @@ const StudentProfile = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No token found');
-      }
-
-      const response = await axios.get('http://127.0.0.1:8000/api/student/profile', {
+      // Thêm timeout để tránh treo UI nếu server không phản hồi
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const res = await fetch(`http://localhost:8000/api/student/profile`, {
+        signal: controller.signal,
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
       });
+      
+      clearTimeout(timeoutId);
+      
+      if (!res.ok) {
+        throw new Error(`Server responded with status: ${res.status}`);
+      }
+      
+      const data = await res.json();
 
-      // API trả về { success, data: { user: {...}, student: {...} } }
-      if (response.data.success && response.data.data) {
-        const { user, student } = response.data.data;
+      if (data.success && data.data.user) {
+        const user = data.data.user;
+        const student = user.student;
+
         setProfileData({
           username: user?.username || '',
           name: user?.full_name || '',
@@ -41,7 +51,6 @@ const StudentProfile = () => {
         });
       } else {
         setError('Invalid data format received from server');
-        console.warn('Invalid data format:', response.data);
       }
     } catch (err) {
       console.error('Failed to fetch profile:', err);
@@ -86,20 +95,7 @@ const StudentProfile = () => {
       alert('Failed to update profile. Please try again.');
     }
   };
-
-  // Lấy danh sách self-study plans theo classSubjectId
-  const fetchSelfStudyPlans = async (classSubjectId) => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${classSubjectId}/self-study-plans`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    return data.data; // hoặc data.plans tùy theo backend trả về
-  };
-
+  
   if (loading) return (
     <div className="profile-container">
       <Sidebar />
@@ -151,7 +147,6 @@ const StudentProfile = () => {
             </div>
 
             <div className="profile-details">
-              <p><strong>Username:</strong> {profileData.username}</p>
               <p><strong>Full Name:</strong> {profileData.name}</p>
               <p><strong>Email:</strong> {profileData.email}</p>
               <p><strong>Role:</strong> {profileData.role}</p>

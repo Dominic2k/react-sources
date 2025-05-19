@@ -23,6 +23,7 @@ const SubjectDetail = () => {
   const [classSubjectId, setClassSubjectId] = useState(null);
   const [subjectInfo, setSubjectInfo] = useState(null);
   const studentId = 3;
+  const [editingGoal, setEditingGoal] = useState(null);
 
   const fetchSubjectDetail = async () => {
     try {
@@ -196,6 +197,13 @@ const SubjectDetail = () => {
     fetchGoals(); // Refresh danh sách goals
   };
 
+  const handleEditGoal = (goal) => setEditingGoal(goal);
+  const handleCloseEditForm = () => setEditingGoal(null);
+  const handleUpdateSuccess = () => {
+    fetchGoals();
+    setEditingGoal(null);
+  };
+
   return (
     <div className="subject-detail-container">
       <Sidebar />
@@ -255,18 +263,20 @@ const SubjectDetail = () => {
 
               {!loading && !error && (
                 <>
-                  <div className="subject-detail-goals">
-                    {Array.isArray(displayedGoals) && displayedGoals.map((goal, idx) => (
-                      <GoalCard key={goal.id || idx} goal={goal} />
-                    ))}
-                    {Array.isArray(displayedGoals) && displayedGoals.length === 0 && !loading && (
-                      <div className="subject-detail-empty">
-                        <div className="subject-detail-empty-text">
-                          No {goalType} goals available for this subject
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <GoalSection
+                    title="Goals"
+                    items={displayedGoals}
+                    emptyMessage={`No ${goalType} goals available for this subject`}
+                    onEditGoal={handleEditGoal}
+                  />
+                  {editingGoal && (
+                    <GoalForm
+                      goal={editingGoal}
+                      class_subject_id={classSubjectId}
+                      onClose={handleCloseEditForm}
+                      onSuccess={handleUpdateSuccess}
+                    />
+                  )}
                 </>
               )}
             </>
