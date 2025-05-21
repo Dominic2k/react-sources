@@ -8,11 +8,14 @@ import InClassForm from '../pages/InClassPlan/InClassForm';
 import ShowInClassForm from '../pages/InClassPlan/ShowInClassForm';
 import { Navigate } from 'react-router-dom';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
-import StudentProfile from '../pages/Profile/StudentProfile';
 
+import StudentProfile from '../pages/Profile/StudentProfile';
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
 import { useNavigate } from 'react-router-dom';
+// import StudentProfile from '../pages/Profile/StudentProfile';
+// Xóa import StudentProfile trùng lặp nếu có
+import AchievementPage from '../pages/Achievement/AchievementPage';
 
 const AppRoutes = () => (
 
@@ -35,6 +38,7 @@ const AppRoutes = () => (
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
 
+     <Route path="/achievements" element ={<AchievementPage/>}/>
   </Routes>
   
 );
