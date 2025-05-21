@@ -1,14 +1,14 @@
 import React from 'react';
 import GoalCard from './GoalCard';
 
-const GoalSection = ({ title, items, emptyMessage }) => {
+const GoalSection = ({ title, items, emptyMessage, onEditGoal }) => {
   return (
     <div style={{ marginBottom: '32px' }}>
       <h3 style={{ color: '#222', fontWeight: 600, marginBottom: '16px' }}>{title}</h3>
       {items.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {items.map(item => (
-            <GoalCard key={item.id || Math.random()} goal={item} />
+            <GoalCard key={item.id || Math.random()} goal={item} onEdit={onEditGoal} />
           ))}
         </div>
       ) : (

@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import './InClassForm.css';
+import { fetchSelfStudyPlans } from '../../services/planService';
+
+export const fetchInClassPlans = async (classSubjectId) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${classSubjectId}/in-class-plans`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  const data = await response.json();
+  return data.data;
+};
 
 function InClassForm() {
   const [date, setDate] = useState(''); 
@@ -11,11 +24,12 @@ function InClassForm() {
   const [difficulties, setDifficulties] = useState('');
   const [plan, setPlan] = useState('');
   const [solved, setSolved] = useState('Yes');
-  
+  const [selfPlans, setSelfPlans] = useState([]);
+
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const subjectId = queryParams.get('subjectId');
+  const classSubjectId = queryParams.get('classSubjectId');
 
   const handleReset = () => {
     setDate('');
@@ -42,15 +56,16 @@ function InClassForm() {
       difficulties_faced: difficulties,
       improvement_plan: plan,
       problem_solved: solved === 'Yes' ? 1 : 0,
-      subject_id: subjectId
+      class_subject_id: classSubjectId
     };
 
     console.log('Sending data:', data); // Log dữ liệu gửi đi
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/in-class-plans', {
+      const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${classSubjectId}/in-class-plans`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
@@ -67,15 +82,21 @@ function InClassForm() {
       console.log('Saved entry:', result);
       alert('Saved successfully!');
       
-      // Quay lại trang subject detail nếu có subjectId
-      if (subjectId) {
-        navigate(`/subject/${subjectId}`);
+      // Quay lại trang subject detail nếu có classSubjectId
+      if (classSubjectId) {
+        navigate(`/subject/${classSubjectId}`);
       }
     } catch (error) {
       console.error('Error saving entry:', error);
       alert(`Failed to save entry: ${error.message}`);
     }
   };
+
+  useEffect(() => {
+    if (classSubjectId) {
+      fetchSelfStudyPlans(classSubjectId).then(setSelfPlans);
+    }
+  }, [classSubjectId]);
 
   return (
     <div className="student-journal-container">
@@ -131,8 +152,8 @@ function InClassForm() {
         <div className="button-group">
           <button type="button" onClick={handleSave} className="save-button">Save</button>
           <button type="button" onClick={handleReset} className="reset-button">Reset</button>
-          {subjectId && (
-            <button type="button" onClick={() => navigate(`/subject/${subjectId}`)} className="back-button">
+          {classSubjectId && (
+            <button type="button" onClick={() => navigate(`/subject/${classSubjectId}`)} className="back-button">
               Back to Subject
             </button>
           )}
