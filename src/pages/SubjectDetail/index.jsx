@@ -288,7 +288,7 @@ const SubjectDetail = () => {
               <h2 className="subject-detail-title">In-class Learning Plans</h2>
               
               {/* Hiển thị bảng danh sách in-class plans */}
-              <ShowInClassForm subjectId={classSubjectId} />
+              <ShowInClassForm subjectId={subjectId} />
               
               <button
                 onClick={() => setShowInClassModal(true)}

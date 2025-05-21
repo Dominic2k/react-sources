@@ -9,9 +9,7 @@ const ShowInClassForm = ({ subjectId }) => {
 
   useEffect(() => {
     // Nếu có subjectId, lọc theo subject
-    const url = subjectId 
-      ? `http://localhost:8000/api/in-class-plans?subject_id=${subjectId}`
-      : "http://localhost:8000/api/in-class-plans";
+    const url = `http://localhost:8000/api/students/subjects/${subjectId}/in-class-plans`;
       
     fetch(url)
       .then((response) => response.json())
