@@ -60,7 +60,7 @@ const Sidebar = () => {
   ];
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/student/profile');
   };
 
   return (

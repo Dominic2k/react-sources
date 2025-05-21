@@ -11,7 +11,13 @@ function AchievementPage() {
 
   const API_URL = 'http://127.0.0.1:8000/api/achievements';
   useEffect(() => {
-    axios.get(API_URL)
+    axios.get(API_URL, {
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Đặt token ở đây
+      },
+    })
+
       .then(res => setAchievements(res.data))
       .catch(err => console.error('Error fetching achievements:', err));
   }, []);
@@ -28,7 +34,12 @@ function AchievementPage() {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`${API_URL}/${id}`)
+    axios.delete(`${API_URL}/${id}`,{
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Đặt token ở đây
+      },
+    }) 
       .then(() => {
         setAchievements(achievements.filter(item => item.id !== id));
       })
@@ -79,7 +90,7 @@ function AchievementPage() {
       />
     </div>
   );
-}
+} 
 
 export default AchievementPage;
 

@@ -4,8 +4,6 @@ import { useNavigate  } from 'react-router-dom';
 import style from './Login.css'
 
 function LoginForm() {
-
-    localStorage.clear()
   const [userEmail, setUserEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

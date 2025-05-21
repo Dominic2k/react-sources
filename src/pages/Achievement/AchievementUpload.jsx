@@ -57,40 +57,6 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
     maxFiles: 1
   });
 
-  // const handleSubmit = async () => {
-  //   setError('');
-
-  //   if (!image || !title || !description || !classSubjectId || !achievementDate || !semester) {
-  //     setError('Please fill in all fields and upload an image.');
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append('file', image); 
-  //   formData.append('title', title);
-  //   formData.append('description', description);
-  //   formData.append('class_subject_id', classSubjectId);
-  //   formData.append('achievement_date', achievementDate);
-  //   formData.append('semester', semester);
-
-  //   try {
-  //     const response = await fetch('http://127.0.0.1:8000/api/achievements', {
-  //       method: 'POST',
-  //       body: formData
-  //     });
-
-  //     if (!response.ok) {
-  //       const resData = await response.json();
-  //       throw new Error(resData.message || 'Something went wrong!');
-  //     }
-
-  //     const result = await response.json();
-  //     onSubmit(result);
-  //     onClose();
-  //   } catch (err) {
-  //     setError(err.message || 'Upload failed.');
-  //   }
-  // };
   const handleSubmit = async () => {
   setError('');
 
@@ -100,18 +66,19 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
   }
 
   const formData = new FormData();
-  formData.append('file', image);
+  formData.append('file_url', image);
   formData.append('title', title);
   formData.append('description', description);
   formData.append('class_subject_id', classSubjectId);
   formData.append('achievement_date', achievementDate);
   formData.append('semester', semester);
-
   try {
+
     const response = await fetch('http://127.0.0.1:8000/api/achievements', {
       method: 'POST',
-      headers: {
-        Accept: 'application/json'
+      headers: {  
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Đặt token ở đây
       },
       body: formData
     });

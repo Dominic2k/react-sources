@@ -12,6 +12,7 @@ import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 
 
 import LoginForm from '../pages/Auth/Login';
+import Logout from '../pages/Auth/Logout';
 import { useNavigate } from 'react-router-dom';
 // import StudentProfile from '../pages/Profile/StudentProfile';
 // Xóa import StudentProfile trùng lặp nếu có
@@ -20,12 +21,13 @@ import AchievementPage from '../pages/Achievement/AchievementPage';
 const AppRoutes = () => (
 
   <Routes>
-    <Route path='/studentProfile' element={<StudentProfile/>}/>
+    <Route path='/student/profile' element={<StudentProfile/>}/>
 
     <Route path="/" element={<Home />} />
     <Route path="/home" element={<Home />} />
 
     <Route path="/login" element={<LoginForm />} />
+    <Route path="/logout" element={<Logout />} />
 
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
@@ -37,7 +39,7 @@ const AppRoutes = () => (
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
 
-     <Route path="/achievement" element ={<AchievementPage/>}/>
+     <Route path="/achievements" element ={<AchievementPage/>}/>
   </Routes>
   
 );
