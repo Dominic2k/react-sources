@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ShowInClassForm.css";
-import TeacherTagBox from "../components/layout/TeacherTagBox";
+import TeacherTagBox from "../../components/layout/TeacherTagBox";
 
 const ShowInClassForm = ({ subjectId }) => {
   const [plans, setPlans] = useState([]);
@@ -9,20 +9,41 @@ const ShowInClassForm = ({ subjectId }) => {
   const currentUserId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const url = subjectId
-      ? `http://localhost:8000/api/in-class-plans?subject_id=${subjectId}`
-      : "http://localhost:8000/api/in-class-plans";
+  const token = localStorage.getItem("token"); // hoặc nơi bạn lưu token
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setPlans(data))
-      .catch((error) => console.error("Fetch error:", error));
-  }, [subjectId]);
+  console.log("Fetching:", subjectId);
 
+  fetch(`http://localhost:8000/api/student/subject/${subjectId}/in-class-plans`, {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("API response:", data);
+      setPlans(data.data);
+    })
+    .catch((error) => console.error("Fetch error:", error));
+}, [subjectId]);
+
+
+  console.log(plans);
+//Xử lí xóa in-class Plan mới nhất
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      fetch(`http://localhost:8000/api/in-class-plans/${id}`, {
+      fetch(`http://localhost:8000/api/student/subject/${subjectId}/in-class-plans/${id}`, {
         method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       })
         .then((response) => {
           if (response.ok) {
@@ -36,9 +57,14 @@ const ShowInClassForm = ({ subjectId }) => {
   };
 
   const handleEdit = (plan) => {
-    setEditId(plan.id);
-    setEditForm({ ...plan });
-  };
+  console.log("Editing plan:", plan);
+  setEditId(plan.id);
+  setEditForm({
+    ...plan,
+    date: plan.date ? plan.date.slice(0, 10) : "", // Format YYYY-MM-DD
+    problem_solved: String(plan.problem_solved),   // Ensure string type
+  });
+};
 
   const handleCancel = () => {
     setEditId(null);
@@ -52,13 +78,14 @@ const ShowInClassForm = ({ subjectId }) => {
       [name]: value,
     }));
   };
-
+  const token = localStorage.getItem("token");
   const handleUpdate = (id) => {
-    fetch(`http://localhost:8000/api/in-class-plans/${id}`, {
+    fetch(`http://localhost:8000/api/student/subject/${subjectId}/in-class-plans/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
-      },
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       body: JSON.stringify(editForm),
     })
       .then((response) => {

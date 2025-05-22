@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import axios from 'axios';
 import './AchievementPage.css';
 
-const MAX_SIZE = 5 * 1024 * 1024;
 
+const MAX_SIZE = 5 * 1024 * 1024;
 function AchievementUpload({ isOpen, onClose, onSubmit }) {
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
