@@ -136,6 +136,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess, goal }) => {
           <h2 style={{ margin: 0 }}>{goal ? 'Edit Goal' : 'Create New Goal'}</h2>
           <button onClick={onClose} style={closeBtnStyle}>&times;</button>
         </div>
+       
 
         {formError && <div style={errorStyle}>{formError}</div>}
         {formSuccess && <div style={successStyle}>{formSuccess}</div>}
@@ -304,7 +305,7 @@ const errorStyle = {
   padding: '10px 14px', borderRadius: '6px', marginBottom: '16px'
 };
 
-const successStyle = {
+const successStyle = {  
   color: '#fff', background: '#4CAF50',
   padding: '10px 14px', borderRadius: '6px', marginBottom: '16px'
 };
