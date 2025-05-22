@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
-import { getStudentSubjectGoals } from '../../services/studentService';
 import GoalSection from '../../components/goals/GoalSection';
 import GoalForm from '../../components/goals/GoalForm';
 import './SubjectDetail.css';
 import ShowInClassForm from '../InClassPlan/ShowInClassForm';
-import InClassFormContent from '../InClassPlan/InClassForm';
 import axios from 'axios';
-import GoalCard from '../../components/goals/GoalCard';
 
 const SubjectDetail = () => {
   const { subjectId } = useParams();
@@ -22,7 +19,6 @@ const SubjectDetail = () => {
   const [showSelfStudyModal, setShowSelfStudyModal] = useState(false);
   const [classSubjectId, setClassSubjectId] = useState(null);
   const [subjectInfo, setSubjectInfo] = useState(null);
-  const studentId = 3;
   const [editingGoal, setEditingGoal] = useState(null);
 
   const fetchSubjectDetail = async () => {
@@ -138,9 +134,9 @@ const SubjectDetail = () => {
   }, [subjectId]);
 
   // Add useEffect to log classSubjectId changes
-  useEffect(() => {
-    console.log('classSubjectId changed:', classSubjectId);
-  }, [classSubjectId]);
+//   useEffect(() => {
+//     console.log('classSubjectId changed:', classSubjectId);
+//   }, [classSubjectId]);
 
   const semesterGoals = goals.filter(goal =>
     ['semester'].includes(goal.type || goal.goal_type || goal.goalType)
@@ -376,7 +372,7 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <InClassFormModal 
-                    subjectId={classSubjectId} 
+                    subjectId={subjectId} 
                     onClose={() => setShowInClassModal(false)}
                     onSuccess={handleInClassFormSuccess}
                   />
@@ -436,33 +432,33 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 
   const handleSave = async () => {
     // Kiểm tra trường bắt buộc
-    if (!date) {
-      alert('Please select a date');
-      return;
+    if (!date || !difficultyLevel || !lesson) {
+        alert('Please fill all required fields: date, self-assessment, and lesson summary.');
+        return;
     }
 
     const data = {
-      date,
-      skills_module: module,
-      lesson_summary: lesson,
-      self_assessment: difficultyLevel,
-      difficulties_faced: difficulties,
-      improvement_plan: plan,
-      problem_solved: solved === 'Yes' ? 1 : 0,
-      subject_id: subjectId
+        date,
+        skills_module: module,
+        lesson_summary: lesson,
+        self_assessment: difficultyLevel,
+        difficulties_faced: difficulties,
+        improvement_plan: plan,
+        problem_solved: solved === 'Yes'
     };
 
-    console.log('Sending data:', data); // Log dữ liệu gửi đi
-
+    console.log('Sending data:', data);
+    const token = localStorage.getItem("token"); // Log dữ liệu gửi đi
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/in-class-plans', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+        const response = await fetch(`http://127.0.0.1:8000/api/student/subject/${subjectId}/in-class-plans`, { 
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data),
+        });
 
       if (!response.ok) {
         const errorText = await response.text();
