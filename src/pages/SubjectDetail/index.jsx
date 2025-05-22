@@ -9,6 +9,7 @@ import ShowInClassForm from '../InClassPlan/ShowInClassForm';
 import InClassFormContent from '../InClassPlan/InClassForm';
 import axios from 'axios';
 import GoalCard from '../../components/goals/GoalCard';
+import TeacherTagBox from '../../components/layout/TeacherTagBox';
 
 const SubjectDetail = () => {
   const { subjectId } = useParams();
@@ -257,7 +258,9 @@ const SubjectDetail = () => {
                   </button>
                 </div>
               </div>
-
+              <div style={{ marginTop: '2rem' }}>
+                <TeacherTagBox entityId={classSubjectId} entityType="goal" />
+              </div>
               {loading && <div className="subject-detail-loading">Loading goals...</div>}
               {error && <div className="subject-detail-error">{error}</div>}
 
@@ -304,6 +307,10 @@ const SubjectDetail = () => {
           {activeTab === 'selfstudy' && (
             <div className="selfstudy-plans-container">
               <h2 className="subject-detail-title">Self-study Learning Plans</h2>
+                            {/* ✅ Teacher Tag Component */}
+              <div style={{ marginTop: '2rem' }}>
+                <TeacherTagBox entityId={classSubjectId} entityType="self_study_plan" />
+              </div>
               
               {loading && <div className="subject-detail-loading">Loading plans...</div>}
               {!loading && (
