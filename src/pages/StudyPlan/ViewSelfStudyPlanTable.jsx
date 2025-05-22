@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
-
 const ViewSelfStudyPlan = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -31,7 +30,7 @@ const ViewSelfStudyPlan = () => {
   };
 
   const handleGoToForm = () => {
-    navigate('/self-study-plans/create'); // Điều hướng đến trang form tạo kế hoạch
+    navigate('/self-study-plans/create');
   };
 
   return (
@@ -44,10 +43,7 @@ const ViewSelfStudyPlan = () => {
           <div className="top-bar">
             <h2>📚 Self Study Plans</h2>
             <div className="buttons">
-              {/* Nút "Create New" luôn hiển thị */}
               <button onClick={handleGoToForm}>➕ Create New</button>
-
-              {/* Nút "Back" luôn hiển thị khi có kế hoạch được chọn */}
               <button
                 onClick={handleBackToList}
                 style={{ display: selectedPlan ? 'inline-block' : 'none' }}
@@ -57,12 +53,11 @@ const ViewSelfStudyPlan = () => {
             </div>
           </div>
 
-          {/* Danh sách các kế hoạch */}
           {!selectedPlan && (
             <div className="plan-list">
               <ul>
                 {plans.map((plan) => (
-                  <li
+                  <li 
                     key={plan.id}
                     className="plan-item"
                     onClick={() => handleSelectPlan(plan)}
@@ -74,7 +69,6 @@ const ViewSelfStudyPlan = () => {
             </div>
           )}
 
-          {/* Chi tiết kế hoạch */}
           {selectedPlan && (
             <div className="plan-detail">
               <h3>📄 Study Plan Detail</h3>

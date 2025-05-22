@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -152,6 +153,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
           <h2 style={{ margin: 0 }}>Tạo Goal Mới</h2>
           <button onClick={onClose} style={closeBtnStyle}>&times;</button>
         </div>
+       
 
         {formError && <div style={errorStyle}>{formError}</div>}
         {formSuccess && <div style={successStyle}>{formSuccess}</div>}
@@ -318,7 +320,7 @@ const errorStyle = {
   padding: '10px 14px', borderRadius: '6px', marginBottom: '16px'
 };
 
-const successStyle = {
+const successStyle = {  
   color: '#fff', background: '#4CAF50',
   padding: '10px 14px', borderRadius: '6px', marginBottom: '16px'
 };

@@ -76,6 +76,13 @@ const ShowInClassForm = ({ subjectId }) => {
 
   return (
     <div className="table-container">
+       <div style={{ marginTop: "20px" }}>
+        <TeacherTagBox
+          entityId={subjectId}
+          entityType="in_class_plan"
+          currentUserId={currentUserId}
+        />
+      </div>
       <table className="inclass-table">
         <thead>
           <tr>
@@ -185,14 +192,6 @@ const ShowInClassForm = ({ subjectId }) => {
         </tbody>
       </table>
 
-      {/* Chỉ một tag box ở dưới cùng */}
-      <div style={{ marginTop: "20px" }}>
-        <TeacherTagBox
-          entityId={subjectId}
-          entityType="in_class_plan"
-          currentUserId={currentUserId}
-        />
-      </div>
     </div>
   );
 };
