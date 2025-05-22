@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-
-const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
+const GoalForm = ({ class_subject_id, onClose, onSuccess, goal }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -9,13 +8,28 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
     startDate: '',
     endDate: '',
     priority: 'high',
-    isPrivate: false
+    isPrivate: false,
+    status: 'not_started'
   });
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  // Log localStorage values when component mounts
+  useEffect(() => {
+    if (goal) {
+      setFormData({
+        title: goal.title || '',
+        description: goal.description || '',
+        goalType: goal.goal_type || 'semester',
+        startDate: goal.start_date?.slice(0, 10) || '',
+        endDate: goal.end_date?.slice(0, 10) || '',
+        priority: goal.priority || 'high',
+        isPrivate: goal.is_private || false,
+        status: goal.status || 'not_started'
+      });
+    }
+  }, [goal]);
+
   useEffect(() => {
     console.log('LocalStorage values:');
     console.log('token:', localStorage.getItem('token'));
@@ -35,46 +49,36 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
     setFormError('');
     setFormSuccess('');
 
-    // Validate required fields
     if (!formData.title.trim()) {
-      setFormError('Vui lòng nhập tiêu đề.');
+      setFormError('Please enter a title.');
       return;
     }
-
     if (!formData.startDate || !formData.endDate) {
-      setFormError('Vui lòng nhập ngày bắt đầu và kết thúc.');
+      setFormError('Please enter both start and end dates.');
       return;
     }
-
     if (new Date(formData.endDate) < new Date(formData.startDate)) {
-      setFormError('Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.');
+      setFormError('End date must be after or equal to start date.');
       return;
     }
 
     try {
       setFormLoading(true);
-      
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('user_id');
 
-      console.log('Class Subject ID:', class_subject_id);
-
       if (!token) {
-        console.log('No token found');
-        setFormError('Vui lòng đăng nhập để tạo goal.');
+        setFormError('Please log in.');
         return;
       }
-
       if (!userId) {
-        console.log('No user_id found');
-        setFormError('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+        setFormError('User information not found. Please log in again.');
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
         window.location.href = '/login';
         return;
       }
 
-      // Prepare request data
       const requestData = {
         title: formData.title,
         description: formData.description,
@@ -83,64 +87,43 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
         end_date: formData.endDate,
         priority: formData.priority,
         is_private: formData.isPrivate,
-        class_subject_id: class_subject_id,
-        student_id: userId,
-        status: 'not_started'
+        status: formData.status
       };
 
-      console.log('Request data:', requestData);
-
-      const response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${class_subject_id}/goals`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      });
+      let response;
+      if (goal && goal.id) {
+        response = await fetch(`http://127.0.0.1:8000/api/student/goals/${goal.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          },
+          body: JSON.stringify(requestData)
+        });
+      } else {
+        response = await fetch(`http://127.0.0.1:8000/api/student/subjects/${class_subject_id}/goals`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          },
+          body: JSON.stringify({ ...requestData, class_subject_id, student_id: userId })
+        });
+      }
 
       const data = await response.json();
-      console.log('Response status:', response.status);
-      console.log('Response data:', data);
 
       if (!response.ok) {
-        // Xử lý các loại lỗi cụ thể
-        if (data.message === 'Student not found') {
-          console.log('Student not found error');
-          setFormError('Không tìm thấy thông tin sinh viên. Vui lòng đăng nhập lại.');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user_id');
-          window.location.href = '/login';
-        } else if (response.status === 401) {
-          console.log('Unauthorized error');
-          setFormError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user_id');
-          window.location.href = '/login';
-        } else if (response.status === 422) {
-          // Validation errors
-          const errors = data.errors || {};
-          console.log('Validation errors:', errors);
-          const errorMessages = Object.values(errors).flat();
-          setFormError(errorMessages.join(', ') || 'Dữ liệu không hợp lệ');
-        } else if (response.status === 404) {
-          setFormError('Không tìm thấy môn học. Vui lòng thử lại sau.');
-        } else {
-          console.error('Error response:', data);
-          setFormError(data.message || 'Có lỗi xảy ra khi tạo goal');
-        }
+        console.error('API error:', data, 'Status:', response.status);
+        setFormError(data.message || 'An error occurred.');
         return;
       }
 
-      console.log('Goal created successfully:', data);
-      
-      setFormSuccess('Tạo goal thành công!');
+      setFormSuccess(goal ? 'Goal updated successfully!' : 'Goal created successfully!');
       onSuccess();
       setTimeout(() => onClose(), 1000);
     } catch (err) {
-      console.error('Error creating goal:', err);
-      setFormError('Có lỗi xảy ra khi tạo goal. Vui lòng thử lại sau.');
+      setFormError('An error occurred. Please try again later.');
     } finally {
       setFormLoading(false);
     }
@@ -150,7 +133,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
     <div style={overlayStyle}>
       <div style={formWrapperStyle}>
         <div style={headerStyle}>
-          <h2 style={{ margin: 0 }}>Tạo Goal Mới</h2>
+          <h2 style={{ margin: 0 }}>{goal ? 'Edit Goal' : 'Create New Goal'}</h2>
           <button onClick={onClose} style={closeBtnStyle}>&times;</button>
         </div>
        
@@ -160,7 +143,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
-            <label style={labelStyle}>Tiêu đề *</label>
+            <label style={labelStyle}>Title *</label>
             <input 
               type="text" 
               name="title" 
@@ -172,7 +155,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
           </div>
 
           <div>
-            <label style={labelStyle}>Mô tả</label>
+            <label style={labelStyle}>Description</label>
             <textarea 
               name="description" 
               value={formData.description} 
@@ -183,7 +166,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
 
           <div style={grid2Cols}>
             <div>
-              <label style={labelStyle}>Loại mục tiêu *</label>
+              <label style={labelStyle}>Goal Type *</label>
               <select 
                 name="goalType" 
                 value={formData.goalType} 
@@ -191,14 +174,14 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
                 style={inputStyle}
                 required
               >
-                <option value="semester">Học kỳ</option>
-                <option value="weekly">Hàng tuần</option>
-                <option value="monthly">Hàng tháng</option>
-                <option value="custom">Tùy chỉnh</option>
+                <option value="semester">Semester</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="custom">Custom</option>
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Mức độ ưu tiên *</label>
+              <label style={labelStyle}>Priority *</label>
               <select 
                 name="priority" 
                 value={formData.priority} 
@@ -206,17 +189,17 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
                 style={inputStyle}
                 required
               >
-                <option value="high">Cao</option>
-                <option value="medium">Trung bình</option>
-                <option value="low">Thấp</option>
-                <option value="critical">Cực kỳ quan trọng</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+                <option value="critical">Critical</option>
               </select>
             </div>
           </div>
 
           <div style={grid2Cols}>
             <div>
-              <label style={labelStyle}>Ngày bắt đầu *</label>
+              <label style={labelStyle}>Start Date *</label>
               <input 
                 type="date" 
                 name="startDate" 
@@ -227,7 +210,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
               />
             </div>
             <div>
-              <label style={labelStyle}>Ngày kết thúc *</label>
+              <label style={labelStyle}>End Date *</label>
               <input 
                 type="date" 
                 name="endDate" 
@@ -248,13 +231,15 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
               onChange={handleChange} 
               style={{ width: '20px', height: '20px' }} 
             />
-            <label htmlFor="isPrivate" style={{ cursor: 'pointer' }}>Riêng tư (chỉ bạn mới nhìn thấy)</label>
+            <label htmlFor="isPrivate" style={{ cursor: 'pointer' }}>
+              Private (only visible to you)
+            </label>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-            <button type="button" onClick={onClose} style={cancelBtnStyle}>Hủy</button>
+            <button type="button" onClick={onClose} style={cancelBtnStyle}>Cancel</button>
             <button type="submit" disabled={formLoading} style={submitBtnStyle}>
-              {formLoading ? 'Đang lưu...' : 'Lưu'}
+              {formLoading ? 'Saving...' : 'Save'}
             </button>
           </div>
         </form>
@@ -265,7 +250,7 @@ const GoalForm = ({ class_subject_id, onClose, onSuccess }) => {
 
 export default GoalForm;
 
-// Styles
+// Styles (unchanged)
 const overlayStyle = {
   position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
   background: 'rgba(0,0,0,0.5)', display: 'flex',

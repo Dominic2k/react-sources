@@ -5,9 +5,8 @@ function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
 
-    if (!token) {
+    if (!localStorage.getItem('token')) {
       navigate('/login'); // Nếu không có token, chuyển hướng đến trang đăng nhập
       return;
     }
@@ -18,7 +17,7 @@ function Logout() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Đặt token ở đây
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Đặt token ở đây
           }
         });
 
