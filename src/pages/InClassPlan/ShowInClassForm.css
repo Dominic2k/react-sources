@@ -1,19 +1,20 @@
-/* InClassForm.css */
-
 .table-container {
-  margin: 20px;
+  margin: 20px auto;
+  max-width: 1200px;
   font-family: Arial, sans-serif;
 }
 
+/* Bảng chính */
 .inclass-table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #999;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 
 .inclass-table th,
 .inclass-table td {
-  border: 1px solid #999;
+  border: 1px solid #ccc;
   padding: 10px;
   vertical-align: top;
   text-align: left;
@@ -29,17 +30,76 @@
 }
 
 .inclass-table thead tr:nth-child(2) th {
-  background-color: #eee;
-  color: #000;
-  text-align: center;
+  background-color: #f5f5f5;
+  color: #333;
   font-weight: bold;
+  text-align: center;
 }
 
-.inclass-table td {
-  background-color: #fff;
-}
-
+/* Form chọn trong bảng */
 .inclass-table select {
   padding: 5px;
+  font-size: 14px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* Giao diện TeacherTagBox khi nhúng */
+.table-container .teacher-tag-box {
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.table-container .teacher-tag-box h5 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #c1002b;
+}
+
+.table-container .teacher-tag-box select,
+.table-container .teacher-tag-box textarea {
+  font-size: 14px;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.table-container .teacher-tag-box button {
+  background-color: #c1002b;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.table-container .teacher-tag-box button:hover {
+  background-color: #a30022;
+}
+
+.table-container .teacher-tag-box button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+/* Tag list trong bảng */
+.table-container .tag-list {
+  margin-top: 16px;
+}
+
+.table-container .tag-item {
+  background-color: #fff;
+  border-left: 4px solid #007bff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
   font-size: 14px;
 }

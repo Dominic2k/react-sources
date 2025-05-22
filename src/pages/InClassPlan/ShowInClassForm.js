@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./ShowInClassForm.css";
-
+import TeacherTagBox from "../../components/layout/TeacherTagBox";
 
 const ShowInClassForm = ({ subjectId }) => {
   const [plans, setPlans] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const currentUserId = localStorage.getItem("userId");
 
   useEffect(() => {
   const token = localStorage.getItem("token"); // hoặc nơi bạn lưu token
@@ -102,6 +103,13 @@ const ShowInClassForm = ({ subjectId }) => {
 
   return (
     <div className="table-container">
+       <div style={{ marginTop: "20px" }}>
+        <TeacherTagBox
+          entityId={subjectId}
+          entityType="in_class_plan"
+          currentUserId={currentUserId}
+        />
+      </div>
       <table className="inclass-table">
         <thead>
           <tr>
@@ -145,7 +153,7 @@ const ShowInClassForm = ({ subjectId }) => {
                     </select>
                   </td>
                   <td>
-                    <input
+                    <textarea
                       name="lesson_summary"
                       value={editForm.lesson_summary || ""}
                       onChange={handleChange}
@@ -163,14 +171,14 @@ const ShowInClassForm = ({ subjectId }) => {
                     </select>
                   </td>
                   <td>
-                    <input
+                    <textarea
                       name="difficulties_faced"
                       value={editForm.difficulties_faced || ""}
                       onChange={handleChange}
                     />
                   </td>
                   <td>
-                    <input
+                    <textarea
                       name="improvement_plan"
                       value={editForm.improvement_plan || ""}
                       onChange={handleChange}
@@ -201,7 +209,7 @@ const ShowInClassForm = ({ subjectId }) => {
                   <td>{plan.improvement_plan}</td>
                   <td>{plan.problem_solved === 1 ? "Yes" : "Not yet"}</td>
                   <td>
-                    <button onClick={() => handleEdit(plan)}>Edit</button>{" "}
+                    <button onClick={() => handleEdit(plan)}>Edit</button>
                     <button onClick={() => handleDelete(plan.id)}>Delete</button>
                   </td>
                 </>
@@ -210,9 +218,9 @@ const ShowInClassForm = ({ subjectId }) => {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 };
 
 export default ShowInClassForm;
-
