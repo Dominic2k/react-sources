@@ -23,7 +23,7 @@ const SubjectDetail = () => {
   const [showSelfStudyModal, setShowSelfStudyModal] = useState(false);
   const [classSubjectId, setClassSubjectId] = useState(null);
   const [subjectInfo, setSubjectInfo] = useState(null);
-  const studentId = 3;
+  const [selectedPlanId, setSelectedPlanId] = React.useState(null);
 
   const fetchSubjectDetail = async () => {
     try {
@@ -197,7 +197,7 @@ const SubjectDetail = () => {
     setShowSelfStudyModal(false);
     fetchGoals(); // Refresh danh sách goals
   };
-
+const studentId = localStorage.getItem("user_id");
   return (
     <div className="subject-detail-container">
       <Sidebar />
@@ -296,17 +296,25 @@ const SubjectDetail = () => {
           {activeTab === 'selfstudy' && (
             <div className="selfstudy-plans-container">
               <h2 className="subject-detail-title">Self-study Learning Plans</h2>
-              <ViewSelfStudyPlan />
+
+              {/* Truyền selectedPlanId vào ViewSelfStudyPlan */}
+              <ViewSelfStudyPlan selectedPlanId={selectedPlanId} />
+
               {loading && <div className="subject-detail-loading">Loading plans...</div>}
+
               {!loading && (
                 <div className="self-study-list">
                   {selfPlans.length > 0 ? (
                     <ul className="plan-list">
                       {selfPlans.map((plan) => (
-                        <li key={plan.id} className="plan-item">
-                          <Link to={`/self-study-plans/${plan.class_name || 'class'}/${plan.id}`}>
-                            <strong>{plan.class_name || 'Unnamed Plan'}</strong> - {plan.date || 'No date'}
-                          </Link>
+                        <li 
+                          key={plan.id} 
+                          className="plan-item" 
+                          style={{ cursor: 'pointer', fontWeight: selectedPlanId === plan.id ? 'bold' : 'normal' }}
+                          onClick={() => setSelectedPlanId(plan.id)} // Bấm chọn kế hoạch
+                        >
+                          {/* Link vẫn giữ, hoặc có thể thay bằng onClick để chọn kế hoạch */}
+                          <strong>{plan.classSubjectId || 'Unnamed Plan'}</strong> - {plan.date || 'No date'}
                         </li>
                       ))}
                     </ul>
@@ -315,7 +323,7 @@ const SubjectDetail = () => {
                   )}
                 </div>
               )}
-              
+
               <button 
                 onClick={() => setShowSelfStudyModal(true)}
                 className="subject-detail-button create-button"
@@ -325,7 +333,6 @@ const SubjectDetail = () => {
               </button>
             </div>
           )}
-
           {/* Modal cho Goal Form */}
           {showForm && classSubjectId && (
             <GoalForm
@@ -392,7 +399,8 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <SelfStudyFormModal 
-                    subjectId={classSubjectId} 
+                  studentId={studentId}
+                    subjectId={subjectId} 
                     onClose={() => setShowSelfStudyModal(false)}
                     onSuccess={handleSelfStudyFormSuccess}
                   />
@@ -552,7 +560,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 };
 
 // Component mới cho Self-study Form dạng modal
-const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
+const SelfStudyFormModal = ({ studentId, subjectId, onClose, onSuccess }) => {
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     module: '',
@@ -564,6 +572,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
     planFollow: 'Not sure',
     evaluation: '',
     reinforcing: '',
+    notes: '',
   });
 
   const handleChange = (e) => {
@@ -582,6 +591,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       planFollow: 'Not sure',
       evaluation: '',
       reinforcing: '',
+      notes: '',
     });
   };
 
@@ -590,8 +600,9 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
 
     const payload = {
       goal_id: null, // Không cần goal_id khi tạo mới
-      class_name: formData.module,
+      subject_id: subjectId,
       date: today,
+      module: formData.module,
       lesson: formData.lesson,
       time: formData.time,
       resources: formData.resources,
@@ -600,11 +611,16 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       plan_follow: formData.planFollow,
       evaluation: formData.evaluation,
       reinforcing: formData.reinforcing,
-      subject_id: null,
+      notes: formData.notes,
     };
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
+      const token = localStorage.getItem('token');
+      await axios.post(`http://127.0.0.1:8000/api/student/subjects/${subjectId}/self-study-plans`, payload,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       alert('Study plan saved successfully!');
       if (onSuccess) onSuccess();
     } catch (error) {
@@ -618,18 +634,15 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       <form className="study-plan-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="module">Module</label>
-          <select
+          <input 
+          type="text"
             id="module"
             name="module"
             value={formData.module}
             onChange={handleChange}
             required
-          >
-            <option value="">-- Choose a module --</option>
-            <option value="IT English">IT English</option>
-            <option value="Communication Skills">Communication Skills</option>
-            <option value="Time Management">Time Management</option>
-          </select>
+            placeholder="What are you studied today?"
+            />
         </div>
 
         <div className="form-group">
@@ -731,6 +744,18 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
             value={formData.reinforcing} 
             onChange={handleChange}
             placeholder="How will you reinforce what you learned?"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="notes">Notes</label>
+          <textarea 
+            id="notes" 
+            name="notes" 
+            rows="2" 
+            value={formData.notes} 
+            onChange={handleChange}
+            placeholder="Notes"
           />
         </div>
 

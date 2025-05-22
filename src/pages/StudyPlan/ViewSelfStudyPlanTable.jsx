@@ -1,121 +1,111 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
 
-const ViewSelfStudyPlan = ({classSubjectId}) => {
+const ViewSelfStudyPlan = () => {
+  const { subjectId } = useParams();
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (classSubjectId) {
-      fetchPlans();
-    }
-  }, [classSubjectId]);
+    const fetchPlans = async () => {
+      if (!subjectId) {
+        console.warn("subjectId is undefined");
+        return;
+      }
 
- const fetchPlans = async () => {
-  try {
-    // const goalId = 1;
-    // const selfId = 2;
-    const res = await axios.get(`http://127.0.0.1:8000/api/self-study-plans/class-subject/${classSubjectId}`);
-    setPlans(res.data);
-  } catch (err) {
-    console.error('Failed to fetch plans:', err);
-  }
-};
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/student/subjects/${subjectId}/self-study-plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setPlans(res.data);
+      } catch (err) {
+        console.error('Lỗi khi lấy kế hoạch học tập:', err.response?.data || err.message);
+        setPlans([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleSelectPlan = (plan) => {
+    fetchPlans();
+  }, [subjectId]);
+
+  const handleSelectPlan = (planId) => {
+    const plan = plans.find((p) => p.id === planId);
     setSelectedPlan(plan);
   };
 
-  const handleBackToList = () => {
-    setSelectedPlan(null);
+  const handleEdit = (planId) => {
+    // Viết xử lý chỉnh sửa tại đây
+    console.log('Chỉnh sửa kế hoạch:', planId);
   };
 
+  const handleDelete = (planId) => {
+    // Viết xử lý xóa tại đây
+    console.log('Xóa kế hoạch:', planId);
+  };
+
+  if (loading) return <p>Đang tải dữ liệu...</p>;
+
   return (
-    <div className="view-self-study-page">
-      <div className="main-content">
+    <div>
 
-        <div className="self-study-container">
-          <div className="top-bar">
-            <div className="buttons">
-
-              {/* Nút "Back" luôn hiển thị khi có kế hoạch được chọn */}
-              <button
-                onClick={handleBackToList}
-                style={{ display: selectedPlan ? 'inline-block' : 'none' }}
-              >
-                🔙 Back
-              </button>
-            </div>
-          </div>
-
-          {/* Danh sách các kế hoạch */}
-          {!selectedPlan && (
-            <div className="plan-list">
-              {plans.length > 0 ? (
-                <ul>
-                  {plans.map((plan) => (
-                    <li
-                      key={plan.id}
-                      className="plan-item"
-                      onClick={() => handleSelectPlan(plan)}
-                    >
-                      <strong>{plan.class_name}</strong> – {plan.date}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="empty-message">No self-study plans available</p>
-              )}
-            </div>
-          )}
-
-          {/* Chi tiết kế hoạch */}
-          {selectedPlan && (
-            <div className="plan-detail">
-              <h3>📄 Study Plan Detail</h3>
-              <table className="detail-table" style={{ borderCollapse: "collapse", width: "100%" }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#b90e32', color: 'white', textAlign: 'center' }}>
-                    <th colSpan="8">In-class</th>
-                  </tr>
-                  <tr style={{ backgroundColor: '#f1f1f1', fontWeight: 'bold', textAlign: 'center' }}>
-                    <th>Date</th>
-                    <th>Module</th>
-                    <th>Lesson</th>
-                    <th>Time</th>
-                    <th>Resources</th>
-                    <th>Activities</th>
-                    <th>Concentration</th>
-                    <th>Plan Follow</th>
-                    <th>Evaluation</th>
-                    <th>Reinforcing</th>
-                  </tr>
-                  </thead>
-                <tbody>
-                  <tr  style={{ textAlign: 'center' }}>
-                  <td>{selectedPlan.date}</td>
-                  <td>{selectedPlan.class_name}</td>
-                  <td>{selectedPlan.lesson}</td>
-                  <td>{selectedPlan.time}</td>
-                  <td>{selectedPlan.resources}</td>
-                  <td>{selectedPlan.activities}</td>
-                  <td>{selectedPlan.concentration}</td>
-                  <td>{selectedPlan.plan_follow}</td>
-                  <td>{selectedPlan.evaluation}</td>
-                  <td>{selectedPlan.reinforcing}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+      {plans.length === 0 ? (
+        <p>Không có kế hoạch học tập nào cho môn học này.</p>
+      ) : (
+        <table className="custom-table w-full">
+          <thead>
+            <tr>
+              <th colSpan="11" className="header-title">Sefl Study</th>
+            </tr>
+            <tr>
+              <th>Date</th>
+              <th>Skills/Module</th>
+              <th>Lesson</th>
+              <th>Time</th>
+              <th>Resources</th>
+              <th>Activity</th>
+              <th>Plan follow</th>
+              <th>Evaluation</th>
+              <th>Reinforcing</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {plans.map((plan) => (
+              <tr key={plan.id}
+                  onClick={() => handleSelectPlan(plan.id)}
+                  className="hover:bg-gray-100">
+                <td>{plan.date}</td>
+                <td>{plan.module || '-'}</td>
+                <td>{plan.lesson}</td>
+                <td>{plan.time || '-'}</td>
+                <td>{plan.resources || '-'}</td>
+                <td>{plan.activities}</td>
+                <td>{plan.plan_follow}</td> {/* ✅ sửa đúng field */}
+                <td>{plan.evaluation || '-'}</td>
+                <td>{plan.reinforcing}</td>
+                <td>{plan.notes}</td>
+                <td>
+                  <button onClick={() => handleEdit(plan.id)} className="edit-btn">✏️</button>
+                  <button onClick={() => handleDelete(plan.id)} className="delete-btn ml-2">🗑️</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
 
 export default ViewSelfStudyPlan;
-

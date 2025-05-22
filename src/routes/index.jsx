@@ -31,10 +31,10 @@ const AppRoutes = () => (
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
       
-    <Route path="/self-study-plans/:class_subject_id" element={<SelfStudyPlan />} />
-    <Route path="/self-study-plans" element={<ViewSelfStudyPlan />} />
+    {/* <Route path="/self-study-plans/:class_subject_id" element={<SelfStudyPlan />} /> */}
+    {/* <Route path="/self-study-plans/:id" element={<ViewSelfStudyPlan />} /> */}
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
-    <Route path="/self-study/:className" element={<SelfStudyPlan />} />
+    <Route path="/subjects/:subjectId/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
 

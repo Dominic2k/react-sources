@@ -4,16 +4,19 @@ import axios from "axios";
 import "./StudentList.css";
 
 const StudentList = () => {
-//   const { classId } = useParams();
+  const { classId } = useParams();
   const [students, setStudents] = useState([]);
+  const [className, setClassName] = useState(""); // State để lưu tên lớp
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const classId = 1;
+
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/classes/${classId}/students`);
-        setStudents(response.data.data || []);
+        const data = response.data.data;
+        setStudents(data.students || []);
+        setClassName(data.class_name || `Class ${classId}`);
       } catch (error) {
         console.error("Failed to fetch students");
       } finally {
@@ -27,7 +30,7 @@ const StudentList = () => {
   return (
     <div className="student-page">
       <button className="btn-back" onClick={() => navigate(-1)}>← Back to Classes</button>
-      <h2>Student List for Class #{classId}</h2>
+      <h2>Student List - {className}</h2>
       {loading ? (
         <p>Loading students...</p>
       ) : students.length > 0 ? (
