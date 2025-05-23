@@ -4,7 +4,7 @@ import SidebarTeacher from '../components/layout/SidebarTeacher';
 import axios from "axios";
 import "./StudentList.css";
 
-const StudentList = () => {
+const ClassStudentList = () => {
   const { teacherId,classId } = useParams();
   const [students, setStudents] = useState([]);
   const [className, setClassName] = useState(""); // State để lưu tên lớp
@@ -63,4 +63,4 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default ClassStudentList;

@@ -68,6 +68,7 @@ const SidebarTeacher = () => {
     { icon: '🏫', label: 'Classes', path: '/classes' },
     { icon: '📄', label: 'Reports', path: '/reports' },
     { icon: '⏱️', label: 'Activity log', path: '/activity-log' },
+    { icon: '🚪', label: 'Logout', path: '/logout' },
   ];
 
   return (

@@ -2,10 +2,19 @@ import React, { useState, useEffect } from 'react';
 import './StudentProfile.css';
 
 const EditModal = ({ data, onClose, onSave }) => {
-  const [editedData, setEditedData] = useState({ ...data });
+  // Map API fields to modal fields
+  const mapDataToFields = (data) => ({
+    name: data?.name || data?.full_name || '',
+    email: data?.email || '',
+    studentId: data?.studentId || data?.student_code || '',
+    admissionDate: data?.admissionDate || data?.admission_date || '',
+    currentSemester: data?.currentSemester || data?.current_semester || '',
+  });
+
+  const [editedData, setEditedData] = useState(mapDataToFields(data));
 
   useEffect(() => {
-    setEditedData(data);
+    setEditedData(mapDataToFields(data));
   }, [data]);
 
   const handleChange = (e) => {
@@ -16,7 +25,9 @@ const EditModal = ({ data, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const payload = {
       full_name: editedData.name,
       email: editedData.email,
@@ -26,16 +37,18 @@ const EditModal = ({ data, onClose, onSave }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/students/2/profile', {
+      const response = await fetch('http://localhost:8000/api/student/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        throw new Error('Update failed');
+        const errorRes = await response.json();
+        throw new Error(errorRes.message || 'Update failed');
       }
 
       const result = await response.json();
@@ -43,7 +56,7 @@ const EditModal = ({ data, onClose, onSave }) => {
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert("There was an error updating the profile. Please try again.");
+      alert("There was an error updating the profile. Please try again.\n" + error.message);
     }
   };
 
@@ -58,22 +71,25 @@ const EditModal = ({ data, onClose, onSave }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <span className="close-btn" onClick={onClose}>&times;</span>
         <h2>Edit Profile</h2>
-
-        {fields.map(field => (
-          <div className="form-group" key={field.name}>
-            <label>{field.label}:</label>
-            <input
-              type="text"
-              name={field.name}
-              value={editedData[field.name] || ''}
-              onChange={handleChange}
-            />
+        <form className="edit-modal-form" onSubmit={handleSubmit}>
+          {fields.map(field => (
+            <div key={field.name} className="form-group">
+              <label htmlFor={field.name}>{field.label}</label>
+              <input
+                type={field.name === 'admissionDate' ? 'date' : 'text'}
+                id={field.name}
+                name={field.name}
+                value={editedData[field.name] || ''}
+                onChange={handleChange}
+              />
+            </div>
+          ))}
+          <div className="button-group">
+            <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
+            <button type="submit" className="save-btn">Save Changes</button>
           </div>
-        ))}
-
-        <button className="save-btn" onClick={handleSubmit}>Save</button>
+        </form>
       </div>
     </div>
   );

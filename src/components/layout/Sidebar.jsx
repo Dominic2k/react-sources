@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
@@ -8,6 +8,7 @@ const Sidebar = () => {
     name: 'Loading...',
     avatar: null
   });
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -15,14 +16,12 @@ const Sidebar = () => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-        const token = localStorage.getItem('token');
-
-        const res = await fetch('http://localhost:8000/api/user', {
+        const res = await fetch(`http://localhost:8000/api/student/profile`, {
           signal: controller.signal,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          },
         });
 
         clearTimeout(timeoutId);
@@ -41,10 +40,12 @@ const Sidebar = () => {
           });
         } else {
           setUserData({ name: 'Student', avatar: null });
+          setError('Invalid data format');
         }
       } catch (err) {
-        console.error('Failed to fetch user data:', err);
+        console.error('Failed to fetch profile:', err);
         setUserData({ name: 'Student', avatar: null });
+        setError('Failed to load user info');
       }
     };
 
@@ -53,23 +54,24 @@ const Sidebar = () => {
 
   const navItems = [
     { icon: '🏠', label: 'Home', path: '/' },
-    { icon: '🗓️', label: 'Calendar', path: '/calendar' },
     { icon: '🏆', label: 'Achievements', path: '/achievements' },
     { icon: '❓', label: 'Help', path: '/help' },
     { icon: '🚪', label: 'Logout', path: '/logout' },
   ];
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/student/profile');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    navigate('/login');
   };
 
   return (
     <aside className="sidebar">
-      <div 
-        className="sidebar-avatar" 
-        onClick={handleProfileClick}
-        title="View Profile"
-      >
+      <div className="sidebar-avatar">
         <div className="sidebar-avatar-img">
           {userData.avatar ? (
             <img src={userData.avatar} alt="User avatar" />
@@ -77,14 +79,21 @@ const Sidebar = () => {
             <span role="img" aria-label="avatar">👩‍🎓</span>
           )}
         </div>
-        <div className="sidebar-avatar-name">{userData.name}</div>
+        <div
+          className="sidebar-avatar-name"
+          onClick={handleProfileClick}
+          title="View Profile"
+          style={{ cursor: 'pointer', textDecoration: 'none' }}
+        >
+          {userData.name}
+        </div>
       </div>
       <nav className="sidebar-nav">
         {navItems.map(item => (
           <div
             key={item.label}
             className={`sidebar-item${window.location.pathname === item.path ? ' active' : ''}`}
-            onClick={() => navigate(item.path)}
+            onClick={() => item.path === '/logout' ? handleLogout() : navigate(item.path)}
             style={{ cursor: 'pointer' }}
           >
             <span style={{ fontSize: 20 }}>{item.icon}</span>
@@ -92,6 +101,7 @@ const Sidebar = () => {
           </div>
         ))}
       </nav>
+      {error && <div className="sidebar-error">{error}</div>}
     </aside>
   );
 };
