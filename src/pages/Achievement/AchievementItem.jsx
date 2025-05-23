@@ -8,11 +8,12 @@ function AchievementItem({
   subjectName,
   date,
   semester,
-  onDelete
+  onDelete,
+  onEdit
 }) {
   return (
     <div className="achievement-item">
-  <img src={image} alt="achievement" className="achievement-image" />
+    <img src={image} alt="achievement" className="achievement-image" />
   <div className="achievement-info">
     <table>
       <tbody>
@@ -38,7 +39,10 @@ function AchievementItem({
         </tr>
       </tbody>
     </table>
+   <div className="button-group">
     <button onClick={onDelete} className="delete-button">Delete</button>
+    <button onClick={onEdit} className="delete-button">Edit</button>
+  </div>
   </div>
 </div>
 

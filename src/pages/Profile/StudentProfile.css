@@ -173,4 +173,111 @@
   background: #b0bec5;
 }
   
-  
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44, 62, 80, 0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal content */
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(44, 62, 80, 0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  animation: modalFadeIn 0.2s;
+}
+
+@keyframes modalFadeIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Form styles */
+.edit-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #34495e;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  border: 1.5px solid #ccd6dd;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #6cb9e5;
+}
+
+/* Button group */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-btn {
+  background: #6cb9e5;
+  color: #fff;
+}
+
+.save-btn:hover {
+  background: #4a90e2;
+}
+
+.cancel-btn {
+  background: #e3eaf1;
+  color: #444;
+}
+
+.cancel-btn:hover {
+  background: #b0bec5;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 20px 16px;
+    min-width: unset;
+    max-width: 92vw;
+  }
+
+  .edit-modal-form {
+    gap: 16px;
+  }
+
+  .form-group input {
+    font-size: 0.95rem;
+  }
+
+  .button-group button {
+    font-size: 0.95rem;
+    padding: 8px 14px;
+  }
+}

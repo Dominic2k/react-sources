@@ -28,7 +28,7 @@ const TeacherTagBox = ({ entityId, entityType }) => {
           setTeachers(data.data);
         }
       });
-  }, []);
+  }, []); // Thêm mảng dependencies rỗng để chỉ gọi API một lần khi component mount
 
   // Fetch sent tags when showTags is true
   useEffect(() => {
@@ -146,7 +146,7 @@ const TeacherTagBox = ({ entityId, entityType }) => {
     <ul>
       {sentTags.map((tag) => (
         <li key={tag.id}>
-          <div><strong>Teacher:</strong> {tag.teacher?.user?.full_name || `Teacher ${tag.teacher_id}`}</div>
+          <div><strong>Teacher:</strong> {tag.teacher?.user?.full_name || `${tag.teacher_name}`}</div>
           <div><strong>Time:</strong> {new Date(tag.created_at).toLocaleString()}</div>
           <div><strong>Message:</strong> {tag.message}</div>
         </li>
