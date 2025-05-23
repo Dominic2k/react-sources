@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ShowInClassForm.css";
-import TeacherTagBox from "../components/layout/TeacherTagBox";
+import TeacherTagBox from "../../components/layout/TeacherTagBox";
 
 const ShowInClassForm = ({ subjectId }) => {
   const [plans, setPlans] = useState([]);
