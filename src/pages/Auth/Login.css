@@ -25,31 +25,113 @@
     
     .login-container {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        height: 80vh;
+        height: 100vh;
+        background-image: url('../../assets/images/vn-banner2.png');
+        background-size: cover;
+        background-position: center;
+        position: relative;
     }
-    
-    .login-button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+
+    .login-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
     }
-    
+
+    .login-welcome-section {
+        flex: 1;
+        color: white;
+        padding: 0 50px;
+        max-width: 600px;
+        z-index: 2;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #fff;
+        animation: fade-in 1s ease-in-out;
+    }
+
+    .welcome-subtitle {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #e89d4c;
+        animation: fade-in 1.2s ease-in-out;
+    }
+
+    .welcome-text {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        animation: fade-in 1.4s ease-in-out;
+    }
+
+    .welcome-quote {
+        font-style: italic;
+        font-size: 1.1rem;
+        border-left: 4px solid #6cb9e5;
+        padding-left: 15px;
+        margin-top: 30px;
+        animation: fade-in 1.6s ease-in-out;
+    }
+
     .login-outside {
-        width: 40vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 10px solid black;
+        width: 450px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        margin-right: 50px;
+        z-index: 2;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border: 10px solid transparent;
         border-top-color: orange;
         border-right-color: orange;
-        border-bottom-color: blue;
-        border-left-color: blue;
+        border-bottom-color: #6cb9e5;
+        border-left-color: #6cb9e5;
         animation: boder-change-color;
         animation-duration: 10s;
         animation-direction: alternate-reverse;
         animation-iteration-count: infinite;
+    }
+
+    .login-inside {
+        padding: 30px;
+    }
+
+    .login-outside h1 {
+        color: #6cb9e5;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 2rem;
+        animation: color-change;
+        animation-duration: 10s;
+        animation-direction: alternate-reverse;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .login-button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
     .login-input-icon>input {
