@@ -134,6 +134,7 @@ const SubjectDetail = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchGoals();
@@ -388,7 +389,7 @@ const SubjectDetail = () => {
                   )}
                 </div>
               )}
-              
+
               <button 
                 onClick={() => setShowSelfStudyModal(true)}
                 className="subject-detail-button create-button"
@@ -398,7 +399,6 @@ const SubjectDetail = () => {
               </button>
             </div>
           )}
-
           {/* Modal cho Goal Form */}
           {showForm && classSubjectId && (
             <GoalForm
@@ -465,7 +465,8 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <SelfStudyFormModal 
-                    subjectId={classSubjectId} 
+                  studentId={studentId}
+                    subjectId={subjectId} 
                     onClose={() => setShowSelfStudyModal(false)}
                     onSuccess={handleSelfStudyFormSuccess}
                   />
@@ -625,7 +626,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 };
 
 // Component mới cho Self-study Form dạng modal
-const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
+const SelfStudyFormModal = ({ studentId, subjectId, onClose, onSuccess }) => {
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     module: '',
@@ -637,6 +638,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
     planFollow: 'Not sure',
     evaluation: '',
     reinforcing: '',
+    notes: '',
   });
 
   const handleChange = (e) => {
@@ -655,6 +657,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       planFollow: 'Not sure',
       evaluation: '',
       reinforcing: '',
+      notes: '',
     });
   };
 
@@ -662,9 +665,9 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
     e.preventDefault();
 
     const payload = {
-      goal_id: null, // Không cần goal_id khi tạo mới
-      class_name: formData.module,
+      subject_id: subjectId,
       date: today,
+      module: formData.module,
       lesson: formData.lesson,
       time: formData.time,
       resources: formData.resources,
@@ -673,7 +676,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       plan_follow: formData.planFollow,
       evaluation: formData.evaluation,
       reinforcing: formData.reinforcing,
-      subject_id: subjectId
+      notes: formData.notes,
     };
 
     try {
@@ -691,18 +694,15 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
       <form className="study-plan-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="module">Module</label>
-          <select
+          <input 
+          type="text"
             id="module"
             name="module"
             value={formData.module}
             onChange={handleChange}
             required
-          >
-            <option value="">-- Choose a module --</option>
-            <option value="IT English">IT English</option>
-            <option value="Communication Skills">Communication Skills</option>
-            <option value="Time Management">Time Management</option>
-          </select>
+            placeholder="What are you studied today?"
+            />
         </div>
 
         <div className="form-group">
@@ -804,6 +804,18 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
             value={formData.reinforcing} 
             onChange={handleChange}
             placeholder="How will you reinforce what you learned?"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="notes">Notes</label>
+          <textarea 
+            id="notes" 
+            name="notes" 
+            rows="2" 
+            value={formData.notes} 
+            onChange={handleChange}
+            placeholder="Notes"
           />
         </div>
 

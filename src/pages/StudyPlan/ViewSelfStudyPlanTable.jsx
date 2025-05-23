@@ -25,17 +25,21 @@ const ViewSelfStudyPlan = () => {
     }
   };
 
-  const handleSelectPlan = (plan) => {
+  const handleSelectPlan = (planId) => {
+    const plan = plans.find((p) => p.id === planId);
     setSelectedPlan(plan);
   };
 
-  const handleBackToList = () => {
-    setSelectedPlan(null);
+  const handleEdit = (planId) => {
+    // Viết xử lý chỉnh sửa tại đây
+    console.log('Chỉnh sửa kế hoạch:', planId);
   };
 
   const handleGoToForm = () => {
     navigate('/self-study-plans/create');
   };
+
+  if (loading) return <p>Đang tải dữ liệu...</p>;
 
   return (
     <div className="view-self-study-page">
