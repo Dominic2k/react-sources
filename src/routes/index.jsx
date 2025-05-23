@@ -10,21 +10,22 @@ import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import StudentProfile from '../pages/Profile/StudentProfile';
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
-// import StudentProfile from '../pages/Profile/StudentProfile';
-// Xóa import StudentProfile trùng lặp nếu có
 import AchievementPage from '../pages/Achievement/AchievementPage';
 
+// Import Admin pages
+import StudentList from '../pages/Admin/Students/StudentList';
+import StudentForm from '../pages/Admin/Students/StudentForm';
+import ClassList from '../pages/Admin/Classes/ClassList';
+import ClassForm from '../pages/Admin/Classes/ClassForm';
+
 const AppRoutes = () => (
-
   <Routes>
+    {/* Student Routes */}
     <Route path='student/profile' element={<StudentProfile/>}/>
-
     <Route path="/" element={<Home />} />
     <Route path="/home" element={<Home />} />
-
     <Route path="/login" element={<LoginForm />} />
     <Route path="/logout" element={<Logout />} />
-
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
@@ -34,9 +35,16 @@ const AppRoutes = () => (
     <Route path="/self-study/:className" element={<SelfStudyPlan />} />
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
+    <Route path="/achievements" element={<AchievementPage/>}/>
 
-     <Route path="/achievements" element ={<AchievementPage/>}/>
+    {/* Admin Routes */}
+    <Route path="/admin/students" element={<StudentList />} />
+    <Route path="/admin/students/create" element={<StudentForm />} />
+    <Route path="/admin/students/edit/:id" element={<StudentForm />} />
+    <Route path="/admin/classes" element={<ClassList />} />
+    <Route path="/admin/classes/create" element={<ClassForm />} />
+    <Route path="/admin/classes/edit/:id" element={<ClassForm />} />
   </Routes>
-  
 );
+
 export default AppRoutes;

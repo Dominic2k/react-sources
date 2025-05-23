@@ -26,7 +26,13 @@ function LoginForm() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      navigate('/home');      // Nếu đã có token, chuyển hướng ngay đến trang home
+      // Kiểm tra role của người dùng để điều hướng
+      const userRole = localStorage.getItem('user_role');
+      if (userRole === 'admin') {
+        navigate('/admin/students');
+      } else {
+        navigate('/home');
+      }
     }
   }, [navigate]);
 
@@ -42,7 +48,8 @@ function LoginForm() {
             },
             body: JSON.stringify({
                 email: userEmail,
-                password:password }),
+                password: password 
+            }),
         });
 
         const data = await response.json();
@@ -54,60 +61,70 @@ function LoginForm() {
 
         // Lưu token và user_id
         localStorage.setItem('token', data.access_token);
-        if (data.user && data.user.id) {
+        
+        // Lưu thông tin user
+        if (data.user) {
             localStorage.setItem('user_id', data.user.id);
-            console.log('Stored user_id:', data.user.id); // Log để debug
+            localStorage.setItem('user_role', data.user.role || 'student');
+            console.log('Stored user_id:', data.user.id);
+            console.log('User role:', data.user.role);
+            
+            // Điều hướng dựa trên role
+            if (data.user.role === 'admin') {
+                navigate('/admin/students');
+            } else {
+                navigate('/home');
+            }
         } else {
-            console.warn('No user_id in response:', data); // Log warning nếu không có user_id
+            console.warn('No user data in response:', data);
+            navigate('/home');
         }
-
-        navigate("/home");
     } catch (err) {
         setError(err.message);
     }
-    };
+  };
 
-    return (
-        <div className="login-container">
-            <div className="login-welcome-section">
-                <h1 className="welcome-title">Welcome to</h1>
-                <h2 className="welcome-subtitle">Learning Journal Management System</h2>
-                <p className="welcome-text">
-                  Track, manage, and enhance your learning journey with our comprehensive platform.
-                </p>
-                <p className="welcome-quote">{quote}</p>
-            </div>
+  return (
+    <div className="login-container">
+        <div className="login-welcome-section">
+            <h1 className="welcome-title">Welcome to</h1>
+            <h2 className="welcome-subtitle">Learning Journal Management System</h2>
+            <p className="welcome-text">
+              Track, manage, and enhance your learning journey with our comprehensive platform.
+            </p>
+            <p className="welcome-quote">{quote}</p>
+        </div>
 
-            <div className="login-outside">
-                <div className='login-inside'>
-                    <h1>Login</h1>
-                    <form onSubmit={handleLogin}>
-        
-                        <div className="login-form-group">
-                            <label htmlFor="email">Email:</label>
-                            <div className="login-input-icon">
-                                <input type="email" id="email" name="email" placeholder="Your email" required onChange={(e) => setUserEmail(e.target.value)} value={userEmail}/>
-                                    <i className="fa-solid fa-envelope" />
-                            </div>
+        <div className="login-outside">
+            <div className='login-inside'>
+                <h1>Login</h1>
+                <form onSubmit={handleLogin}>
+    
+                    <div className="login-form-group">
+                        <label htmlFor="email">Email:</label>
+                        <div className="login-input-icon">
+                            <input type="email" id="email" name="email" placeholder="Your email" required onChange={(e) => setUserEmail(e.target.value)} value={userEmail}/>
+                                <i className="fa-solid fa-envelope" />
                         </div>
-                        <br />
-                        <div className="login-form-group">
-                            <label htmlFor="password">Password:</label>
-                            <div className="login-input-icon">
-                                <input placeholder="Your password" type="password"  value={password} onChange={(e) => setPassword(e.target.value)}  required />
-                                <i className="fa-solid fa-lock" />
-                            </div>
+                    </div>
+                    <br />
+                    <div className="login-form-group">
+                        <label htmlFor="password">Password:</label>
+                        <div className="login-input-icon">
+                            <input placeholder="Your password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            <i className="fa-solid fa-lock" />
                         </div>
-                        
-                        {error && <div className="error-message">{error}</div>}
-                        
-                        <div className="login-button-container">
-                          <button type="submit" className="login-button">Login</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    
+                    {error && <div className="error-message">{error}</div>}
+                    
+                    <div className="login-button-container">
+                      <button type="submit" className="login-button">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
   );
 }
 

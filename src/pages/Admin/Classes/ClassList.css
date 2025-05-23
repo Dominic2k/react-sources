@@ -1,0 +1,74 @@
+/* Kế thừa các style từ StudentList.css */
+.class-table-container {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.class-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.class-table th {
+  background-color: #E67E22;
+  color: white;
+  text-align: left;
+  padding: 12px 15px;
+}
+
+.class-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.class-table tr:last-child td {
+  border-bottom: none;
+}
+
+.no-data {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+}
+
+.loading, .error-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+/* Thêm style cho status badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-active {
+  background-color: #e3fcef;
+  color: #00a854;
+}
+
+.status-ongoing {
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+.status-completed {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+.status-planning {
+  background-color: #e6f7ff;
+  color: #18ff74;
+}
+
