@@ -1,0 +1,208 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-content {
+  flex: 1;
+  background-color: #f5f5f5;
+  margin-left: 200px; /* Bằng với width của sidebar */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 200px; /* Bằng với width của sidebar */
+  z-index: 99;
+  height: 36px; /* Chiều cao cố định cho header */
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  width: 300px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: #f0f0f0;
+  outline: none;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  margin-right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.admin-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.admin-main {
+  padding: 20px;
+  margin-top: 64px; /* Bằng với height của header */
+  overflow-y: auto;
+  height: calc(100vh - 64px); /* Chiều cao còn lại sau khi trừ header */
+}
+
+.admin-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.admin-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+}
+
+.add-new-button {
+  background-color: #7FB3D5;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.add-new-button span {
+  margin-left: 5px;
+  font-size: 18px;
+}
+
+.filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.admin-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.student-table-container {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-table th {
+  background-color: #E67E22;
+  color: white;
+  text-align: left;
+  padding: 12px 15px;
+}
+
+.student-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.student-table tr:last-child td {
+  border-bottom: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.prev-button, .next-button {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.prev-button:disabled, .next-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+.loading, .error-message, .no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error-message {
+  color: #e74c3c;
+}
