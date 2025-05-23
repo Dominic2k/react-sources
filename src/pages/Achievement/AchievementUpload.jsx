@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import axios from 'axios';
-import './AchievementPage.css';
-
 
 const MAX_SIZE = 5 * 1024 * 1024;
-function AchievementUpload({ isOpen, onClose, onSubmit }) {
+
+function AchievementUpload({ isOpen, onClose, onSubmit, achievementToEdit }) {
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
@@ -19,9 +17,29 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
     { id: 2, name: 'Web Programming' },
     { id: 3, name: 'Database' }
   ];
-
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      if (achievementToEdit) {
+        setTitle(achievementToEdit.title || '');
+        setDescription(achievementToEdit.description || '');
+        setClassSubjectId(achievementToEdit.class_subject_id || '');
+        setAchievementDate(achievementToEdit.achievement_date || '');
+        setSemester(achievementToEdit.semester || '');
+        if (achievementToEdit.file_url) {
+          setImage({ preview: achievementToEdit.file_url, isFile: false });
+        } else {
+          setImage(null);
+        }
+      } else {
+        setImage(null);
+        setTitle('');
+        setDescription('');
+        setClassSubjectId('');
+        setAchievementDate('');
+        setSemester('');
+        setError('');
+      }
+    } else {
       setImage(null);
       setError('');
       setTitle('');
@@ -30,7 +48,7 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
       setAchievementDate('');
       setSemester('');
     }
-  }, [isOpen]);
+  }, [isOpen, achievementToEdit]);
 
   const onDrop = useCallback((acceptedFiles, fileRejections) => {
     setError('');
@@ -61,55 +79,59 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
   const handleSubmit = async () => {
   setError('');
 
-  if (!image || !title || !description || !classSubjectId || !achievementDate || !semester) {
-    setError('Please fill in all fields and upload an image.');
+  if (!title || !description || !classSubjectId || !achievementDate || !semester) {
+    setError('Vui lòng điền đầy đủ các trường.');
     return;
   }
 
   const formData = new FormData();
-  formData.append('file_url', image);
+  if (image && image instanceof File) {
+    formData.append('file_url', image);
+  }
   formData.append('title', title);
   formData.append('description', description);
   formData.append('class_subject_id', classSubjectId);
   formData.append('achievement_date', achievementDate);
   formData.append('semester', semester);
+
   try {
-
-    const response = await fetch('http://127.0.0.1:8000/api/achievements', {
-      method: 'POST',
-      headers: {  
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Đặt token ở đây
-      },
-      body: formData
-    });
-
-    const contentType = response.headers.get('Content-Type');
-
-    if (!response.ok) {
-      const errorData = contentType.includes('application/json')
-        ? await response.json()
-        : await response.text();
-      throw new Error(errorData.message || 'Something went wrong!');
+    let response;
+    if (achievementToEdit && achievementToEdit.id) {
+      response = await fetch(`http://127.0.0.1:8000/api/achievements/${achievementToEdit.id}?_method=PUT`, {
+        method: 'POST', 
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+    } else {
+      response = await fetch('http://127.0.0.1:8000/api/achievements', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
     }
-
+    if (!response.ok) {
+      const errorData = await response.text(); 
+      throw new Error(errorData || 'Cập nhật thất bại!');
+    }
     const result = await response.json();
     onSubmit(result);
     onClose();
   } catch (err) {
-    setError(err.message || 'Upload failed.');
+    setError(err.message || 'Cập nhật thất bại.');
+    console.error('Error:', err);
   }
 };
-          
-
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3 className="upload-title">Upload Your Achievement</h3>
+        <h3 className="upload-title">{achievementToEdit ? 'Edit Achievement' : 'Upload Your Achievement'}</h3>
 
-        {/* Upload ảnh */}
         <div {...getRootProps()} className={`dropzone ${isDragActive ? 'dropzone-active' : ''}`}>
           <input {...getInputProps()} />
           <p>{isDragActive ? 'Thả ảnh vào đây...' : 'Kéo & thả ảnh vào hoặc nhấn để chọn'}</p>
@@ -121,7 +143,6 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
           </div>
         )}
 
-        {/* Form nhập thông tin */}
         <input
           type="text"
           placeholder="Title"
@@ -170,7 +191,7 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
 
         <div className="modal-buttons">
           <button onClick={onClose}>Cancel</button>
-          <button onClick={handleSubmit}>Submit</button>
+          <button onClick={handleSubmit}>{achievementToEdit ? 'Update' : 'Submit'}</button>
         </div>
       </div>
     </div>
@@ -178,3 +199,4 @@ function AchievementUpload({ isOpen, onClose, onSubmit }) {
 }
 
 export default AchievementUpload;
+
