@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import SidebarTeacher from '../components/layout/SidebarTeacher';
 import axios from "axios";
 import "./TeacherClasses.css";
 
@@ -18,7 +19,14 @@ const { teacherId } = useParams();
 
     const fetchTeacherClasses = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/teacher/${teacherId}/classes`);
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://127.0.0.1:8000/api/teacher/${teacherId}/classes`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
         setClasses(response.data.data);
 
       } catch (err) {
@@ -35,6 +43,8 @@ const { teacherId } = useParams();
   if (error) return <p>{error}</p>;
 
   return (
+    <div className ="page-container">
+      <SidebarTeacher />
     <main className="main-content">
       <h2>My Teaching Classes</h2>
       <section className="classes-grid">
@@ -48,7 +58,8 @@ const { teacherId } = useParams();
               <button
                 className="btn-details"
                 type="button"
-                onClick={() => navigate(`/teacher/class/${cls.class_id}/students`)}
+                onClick={() => navigate(`/classes/${cls.class_id}/students`)
+}
               >
                 View Details
               </button>
@@ -60,6 +71,7 @@ const { teacherId } = useParams();
 
       </section>
     </main>
+    </div>
   );
 };
 

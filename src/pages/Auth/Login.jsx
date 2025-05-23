@@ -40,18 +40,26 @@ function LoginForm() {
 
         // Lưu token và user_id
         localStorage.setItem('token', data.access_token);
-        if (data.user && data.user.id) {
-            localStorage.setItem('user_id', data.user.id);
-            console.log('Stored user_id:', data.user.id); // Log để debug
-        } else {
-            console.warn('No user_id in response:', data); // Log warning nếu không có user_id
-        }
+       if (data.user) {
+        localStorage.setItem('user_id', data.user.id);
+        localStorage.setItem('user_role', data.user.role);
+        localStorage.setItem('user_name', data.user.full_name);
 
-        navigate("/home");
-    } catch (err) {
-        setError(err.message);
-    }
-    };
+        // Chuyển hướng theo role
+        if (data.user.role === 'teacher') {
+            navigate(`/teacher/${data.user.id}/classes`);
+        } else if (data.user.role === 'student') {
+            navigate(`/home`);
+        } else {
+            navigate('/home'); // fallback nếu role không xác định
+        }
+        } else {
+            throw new Error("Không có thông tin user trong phản hồi.");
+        }
+        } catch (err) {
+            setError(err.message);
+        }
+        };
 
     return (
         <div className="login-container">

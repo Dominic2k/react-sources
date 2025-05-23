@@ -1,9 +1,16 @@
 .student-page {
-  padding: 20px;
+  display: flex;       /* Chia layout 2 cột */
+  min-height: 100vh;   /* Chiều cao full màn hình */
   background-color: #f7f9fc;
 }
 
+.main-content {
+  flex: 1;              /* Phần còn lại cho nội dung chính */
+  padding: 20px;
+}
+
 .btn-back {
+  width: 150px;
   margin-bottom: 20px;
   padding: 6px 12px;
   background-color: #007bff;
@@ -13,6 +20,12 @@
   cursor: pointer;
 }
 
+.btn-deadline {
+  width: 214px;
+  margin-left: 13px;
+  height: 45px;
+  border-radius: 6px;
+}
 .student-list {
   list-style: none;
   padding: 0;

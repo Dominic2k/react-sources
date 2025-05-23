@@ -31,16 +31,14 @@ const AppRoutes = () => (
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
     {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
       
-    {/* <Route path="/self-study-plans/:class_subject_id" element={<SelfStudyPlan />} /> */}
-    {/* <Route path="/self-study-plans/:id" element={<ViewSelfStudyPlan />} /> */}
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
     <Route path="/subjects/:subjectId/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/in-class-form" element={<InClassForm />} />
     <Route path="/showinclassform" element={<ShowInClassForm/>} />
 
 
-<Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
-    <Route path="/teacher/class/:classId/students" element={<StudentList />} />
+    <Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
+    <Route path="/classes/:classId/students" element={<StudentList />} />
 
   </Routes>
   

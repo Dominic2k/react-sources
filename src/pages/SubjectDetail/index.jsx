@@ -599,7 +599,6 @@ const SelfStudyFormModal = ({ studentId, subjectId, onClose, onSuccess }) => {
     e.preventDefault();
 
     const payload = {
-      goal_id: null, // Không cần goal_id khi tạo mới
       subject_id: subjectId,
       date: today,
       module: formData.module,
