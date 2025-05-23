@@ -1,8 +1,16 @@
-/* Layout chính */
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
 .achievement-container {
   display: flex;
   flex-direction: row;
-  /* gap: 30px; */
   margin: 0 auto;
   padding: 0;
   min-height: 100vh;
@@ -19,12 +27,6 @@
 }
 
 .achievement-header {
-  /* text-align: center; */
-  /* margin-bottom: 40px; */
-  /* background-image: url('https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/05/anh-mau-xanh-duong-42.jpg');
-  background-size: cover;
-  background-position: center; */
-  /* padding: 80px 20px; */
   border-radius: 12px;
   color: rgb(17, 16, 16);
   font-size: 30px;
@@ -34,8 +36,8 @@
   font-size: 4rem;
   margin-bottom: 10px;
   text-align: center;
-     font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   letter-spacing: 1px;
 }
 
@@ -74,7 +76,7 @@
   background-color: #ffffff;
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .right-panel h2 {
@@ -131,26 +133,25 @@
 }
 
 .image-preview-container {
-  /* margin-top: 20px; */
   text-align: center;
   width: 100%;
-  height: 350px;
+  height:250px;
   overflow: hidden;
 }
 
 .image-preview-container img,
 .image-preview {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 400px; 
+  max-height: 400px; 
   object-fit: contain;
-  border-radius: 8px;
-  display: block;
-  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
 }
 
 .caption-container,
 .caption-input {
-  margin-top: 10px;
   width: 100%;
 }
 
@@ -228,8 +229,6 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -239,10 +238,12 @@
 
 .modal-content {
   background-color: white;
-  padding: 30px;
+  padding: 10px;
   border-radius: 12px;
-  max-width: 600px;
-  width: 100%;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -270,7 +271,7 @@
   display: flex;
   gap: 10px;
 }
-/* //// */
+
 .achievement-item {
   display: flex;
   flex-direction: row;
@@ -283,19 +284,34 @@
   gap: 20px;
   align-items: flex-start;
 }
-
 .achievement-image {
-   max-width: 100%;
-  height: 500px;
+  width: 300px; 
+  height: 300px; 
   border-radius: 10px;
   background-color: #f0f0f0;
+  background-image: linear-gradient(45deg, #f0f0f0, #e0e0e0); 
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden; 
+}
+
+.achievement-image img {
+  width: 100%; 
+  height: 100%; 
+  max-width: 400px; 
+  max-height: 400px; 
+  object-fit: contain;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
 }
 
 .achievement-info {
   flex: 1;
   font-size: 24px;
-  
-} 
+}
 
 .achievement-info table {
   width: 100%;
@@ -305,7 +321,6 @@
 .achievement-info table td {
   padding: 8px 12px;
   vertical-align: top;
-
 }
 
 .achievement-info table td:first-child {
@@ -314,9 +329,15 @@
   color: #141313;
 }
 
+.button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin-right: 900px;
+}
+
 .delete-button {
-  margin-top: 12px;
-  padding: 10px 25px 10px 20px;
+  padding: 15px 30px;
   background-color: #e74c3c;
   color: white;
   border: none;
