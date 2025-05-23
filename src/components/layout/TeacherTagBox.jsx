@@ -28,7 +28,7 @@ const TeacherTagBox = ({ entityId, entityType }) => {
           setTeachers(data.data);
         }
       });
-  }, []);
+  }, []); // Thêm mảng dependencies rỗng để chỉ gọi API một lần khi component mount
 
   // Fetch sent tags when showTags is true
   useEffect(() => {

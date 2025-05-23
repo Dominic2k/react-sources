@@ -1,0 +1,36 @@
+.plan-item {
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.plan-item a {
+  display: block;
+  padding: 15px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f9f9f9;
+  transition: background-color 0.2s;
+}
+
+.plan-item a:hover {
+  background-color: #f0f0f0;
+}
+
+.plan-item-title {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.plan-item-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.plan-item-details span {
+  display: inline-block;
+}
