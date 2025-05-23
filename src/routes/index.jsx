@@ -1,7 +1,5 @@
-import {React} from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
-import About from '../pages/About';
 import SubjectDetail from '../pages/SubjectDetail';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import InClassForm from '../pages/InClassPlan/InClassForm';
@@ -12,7 +10,6 @@ import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 import StudentProfile from '../pages/Profile/StudentProfile';
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
-import { useNavigate } from 'react-router-dom';
 // import StudentProfile from '../pages/Profile/StudentProfile';
 // Xóa import StudentProfile trùng lặp nếu có
 import AchievementPage from '../pages/Achievement/AchievementPage';

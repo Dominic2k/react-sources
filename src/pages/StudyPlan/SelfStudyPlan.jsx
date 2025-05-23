@@ -28,17 +28,13 @@ const SelfStudyPlan = () => {
 
   const handleGoToList = () => {
     // Nếu có subjectId, quay lại trang subject detail
-    if (subjectId) {
-      navigate(`/subject/${subjectId}`);
-    } else {
-      navigate('/self-study-plans/');
-    }
+    navigate(`/subject/${subjectId}`);
   };
 
   useEffect(() => {
     const fetchStudyPlan = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/self-study-plans/goal/${goalId}`);
+        const response = await axios.get(`http://localhost:8000/api/student/subject/${subjectId}/self-study-plans`);
         const data = response.data;
 
         setFormData({
@@ -88,7 +84,7 @@ const SelfStudyPlan = () => {
     };
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
+      await axios.post(`http://127.0.0.1:8000/api/student/subject/${subjectId}/self-study-plans`, payload);
       alert('Study plan saved successfully!');
       
       // Nếu có subjectId, quay lại trang subject detail

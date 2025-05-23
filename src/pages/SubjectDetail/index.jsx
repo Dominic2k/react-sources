@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
-import { getStudentSubjectGoals } from '../../services/studentService';
 import GoalSection from '../../components/goals/GoalSection';
 import GoalForm from '../../components/goals/GoalForm';
 import './SubjectDetail.css';
 import ShowInClassForm from '../InClassPlan/ShowInClassForm';
-import InClassFormContent from '../InClassPlan/InClassForm';
 import axios from 'axios';
 import GoalCard from '../../components/goals/GoalCard';
 import TeacherTagBox from '../../components/layout/TeacherTagBox';
@@ -23,8 +21,11 @@ const SubjectDetail = () => {
   const [showSelfStudyModal, setShowSelfStudyModal] = useState(false);
   const [classSubjectId, setClassSubjectId] = useState(null);
   const [subjectInfo, setSubjectInfo] = useState(null);
-  const studentId = 3;
   const [editingGoal, setEditingGoal] = useState(null);
+  // Thêm state mới để lưu self-study plans
+  const [selfStudyPlans, setSelfStudyPlans] = useState([]);
+  const [loadingSelfStudy, setLoadingSelfStudy] = useState(false);
+  const [selfStudyError, setSelfStudyError] = useState('');
 
   const fetchSubjectDetail = async () => {
     try {
@@ -110,23 +111,23 @@ const SubjectDetail = () => {
 
       // Kiểm tra cấu trúc dữ liệu trả về
       if (data.success && Array.isArray(data.data)) {
-        console.log('Setting goals:', data.data);
+        // console.log('Setting goals:', data.data);
         setGoals(data.data);
       } else if (Array.isArray(data)) {
         // Trường hợp API trả về trực tiếp mảng goals
-        console.log('Setting goals (direct array):', data);
+        // console.log('Setting goals (direct array):', data);
         setGoals(data);
       } else if (data.goals && Array.isArray(data.goals)) {
         // Trường hợp API trả về trong trường goals
-        console.log('Setting goals (from goals field):', data.goals);
+        // console.log('Setting goals (from goals field):', data.goals);
         setGoals(data.goals);
       } else {
-        console.log('No valid goals data found in response');
+        // console.log('No valid goals data found in response');
         setGoals([]);
         setError('No goals found');
       }
     } catch (error) {
-      console.error('Error fetching goals:', error);
+      // console.error('Error fetching goals:', error);
       setError('Error loading goals');
       setGoals([]);
     } finally {
@@ -139,9 +140,9 @@ const SubjectDetail = () => {
   }, [subjectId]);
 
   // Add useEffect to log classSubjectId changes
-  useEffect(() => {
-    console.log('classSubjectId changed:', classSubjectId);
-  }, [classSubjectId]);
+//   useEffect(() => {
+//     console.log('classSubjectId changed:', classSubjectId);
+//   }, [classSubjectId]);
 
   const semesterGoals = goals.filter(goal =>
     ['semester'].includes(goal.type || goal.goal_type || goal.goalType)
@@ -157,14 +158,6 @@ const SubjectDetail = () => {
 
   const customGoals = goals.filter(goal =>
     ['custom'].includes(goal.type || goal.goal_type || goal.goalType)
-  );
-
-  const inclassPlans = goals.filter(goal =>
-    ['inclass'].includes(goal.plan_type || goal.planType || goal.plan)
-  );
-
-  const selfPlans = goals.filter(goal =>
-    ['self'].includes(goal.plan_type || goal.planType || goal.plan)
   );
 
   const displayedGoals = (() => {
@@ -204,6 +197,63 @@ const SubjectDetail = () => {
     fetchGoals();
     setEditingGoal(null);
   };
+
+  // Thêm hàm fetchSelfStudyPlans
+  const fetchSelfStudyPlans = async () => {
+    try {
+      setLoadingSelfStudy(true);
+      setSelfStudyError('');
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setSelfStudyError('Please login to view plans');
+        setLoadingSelfStudy(false);
+        return;
+      }
+
+      if (!subjectId) {
+        setLoadingSelfStudy(false);
+        return;
+      }
+
+      console.log('Fetching self-study plans for subject:', subjectId);
+      
+      const response = await fetch(`http://localhost:8000/api/student/subject/${subjectId}/self-study-plans`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch self-study plans');
+      }
+
+      const data = await response.json();
+      // console.log('Self-study plans response:', data);
+
+      if (Array.isArray(data)) {
+        setSelfStudyPlans(data);
+      } else if (data.data && Array.isArray(data.data)) {
+        setSelfStudyPlans(data.data);
+      } else {
+        setSelfStudyPlans([]);
+      }
+    } catch (error) {
+      // console.error('Error fetching self-study plans:', error);
+      setSelfStudyError('Error loading self-study plans');
+      setSelfStudyPlans([]);
+    } finally {
+      setLoadingSelfStudy(false);
+    }
+  };
+
+  // Thêm useEffect để gọi API khi tab selfstudy được chọn
+  useEffect(() => {
+    if (activeTab === 'selfstudy' && classSubjectId) {
+      fetchSelfStudyPlans();
+    }
+  }, [activeTab, classSubjectId]);
 
   return (
     <div className="subject-detail-container">
@@ -291,7 +341,7 @@ const SubjectDetail = () => {
               <h2 className="subject-detail-title">In-class Learning Plans</h2>
               
               {/* Hiển thị bảng danh sách in-class plans */}
-              <ShowInClassForm subjectId={classSubjectId} />
+              <ShowInClassForm subjectId={subjectId} />
               
               <button
                 onClick={() => setShowInClassModal(true)}
@@ -312,15 +362,23 @@ const SubjectDetail = () => {
                 <TeacherTagBox entityId={classSubjectId} entityType="self_study_plan" />
               </div>
               
-              {loading && <div className="subject-detail-loading">Loading plans...</div>}
-              {!loading && (
+              {loadingSelfStudy && <div className="subject-detail-loading">Loading plans...</div>}
+              {selfStudyError && <div className="subject-detail-error">{selfStudyError}</div>}
+              {!loadingSelfStudy && !selfStudyError && (
                 <div className="self-study-list">
-                  {selfPlans.length > 0 ? (
+                  {selfStudyPlans.length > 0 ? (
                     <ul className="plan-list">
-                      {selfPlans.map((plan) => (
+                      {selfStudyPlans.map((plan) => (
                         <li key={plan.id} className="plan-item">
-                          <Link to={`/self-study-plans/${plan.class_name || 'class'}/${plan.id}`}>
-                            <strong>{plan.class_name || 'Unnamed Plan'}</strong> - {plan.date || 'No date'}
+                          <Link to={`/self-study-plans/${plan.lesson || 'class'}/${plan.id}?subjectId=${classSubjectId}`}>
+                            <div className="plan-item-title">
+                              <strong>{plan.lesson || 'Unnamed Plan'}</strong>
+                            </div>
+                            <div className="plan-item-details">
+                              <span>📅 {plan.date || 'No date'}</span>
+                              <span>⏰ {plan.time || 'No time'}</span>
+                              <span>📚 {plan.resources ? (plan.resources.length > 20 ? plan.resources.substring(0, 20) + '...' : plan.resources) : 'No resources'}</span>
+                            </div>
                           </Link>
                         </li>
                       ))}
@@ -383,7 +441,7 @@ const SubjectDetail = () => {
                 </div>
                 <div className="modal-content">
                   <InClassFormModal 
-                    subjectId={classSubjectId} 
+                    subjectId={subjectId} 
                     onClose={() => setShowInClassModal(false)}
                     onSuccess={handleInClassFormSuccess}
                   />
@@ -443,33 +501,33 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 
   const handleSave = async () => {
     // Kiểm tra trường bắt buộc
-    if (!date) {
-      alert('Please select a date');
-      return;
+    if (!date || !difficultyLevel || !lesson) {
+        alert('Please fill all required fields: date, self-assessment, and lesson summary.');
+        return;
     }
 
     const data = {
-      date,
-      skills_module: module,
-      lesson_summary: lesson,
-      self_assessment: difficultyLevel,
-      difficulties_faced: difficulties,
-      improvement_plan: plan,
-      problem_solved: solved === 'Yes' ? 1 : 0,
-      subject_id: subjectId
+        date,
+        skills_module: module,
+        lesson_summary: lesson,
+        self_assessment: difficultyLevel,
+        difficulties_faced: difficulties,
+        improvement_plan: plan,
+        problem_solved: solved === 'Yes'
     };
 
-    console.log('Sending data:', data); // Log dữ liệu gửi đi
-
+    console.log('Sending data:', data);
+    const token = localStorage.getItem("token"); // Log dữ liệu gửi đi
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/in-class-plans', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+        const response = await fetch(`http://127.0.0.1:8000/api/student/subject/${subjectId}/in-class-plans`, { 
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data),
+        });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -619,7 +677,7 @@ const SelfStudyFormModal = ({ subjectId, onClose, onSuccess }) => {
     };
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/self-study-plans', payload);
+      await axios.post(`http://127.0.0.1:8000/api/student/subjects/${subjectId}/self-study-plans`, payload);
       alert('Study plan saved successfully!');
       if (onSuccess) onSuccess();
     } catch (error) {

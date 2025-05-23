@@ -58,7 +58,7 @@ function AchievementPage() {
       <div className="main-content">
         <Header/>
         <div className="achievement-header">
-          <h2>My Achievements</h2>
+          <h5>My Achievements</h5>
         </div>
 
         <div className="left-panel">
