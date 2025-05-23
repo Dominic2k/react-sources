@@ -25,7 +25,9 @@ const EditModal = ({ data, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const payload = {
       full_name: editedData.name,
       email: editedData.email,
@@ -36,11 +38,6 @@ const EditModal = ({ data, onClose, onSave }) => {
 
     try {
       const response = await fetch('http://localhost:8000/api/student/profile', {
-
-      // const token = localStorage.getItem('token');
-      // if (!token) {
-      //   throw new Error('No token found');
-      // }
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +47,8 @@ const EditModal = ({ data, onClose, onSave }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Update failed');
+        const errorRes = await response.json();
+        throw new Error(errorRes.message || 'Update failed');
       }
 
       const result = await response.json();
@@ -58,7 +56,7 @@ const EditModal = ({ data, onClose, onSave }) => {
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert("There was an error updating the profile. Please try again.");
+      alert("There was an error updating the profile. Please try again.\n" + error.message);
     }
   };
 
@@ -74,7 +72,7 @@ const EditModal = ({ data, onClose, onSave }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>Edit Profile</h2>
-        <form className="edit-modal-form">
+        <form className="edit-modal-form" onSubmit={handleSubmit}>
           {fields.map(field => (
             <div key={field.name} className="form-group">
               <label htmlFor={field.name}>{field.label}</label>
@@ -88,8 +86,8 @@ const EditModal = ({ data, onClose, onSave }) => {
             </div>
           ))}
           <div className="button-group">
-            <button className="cancel-btn" onClick={onClose}>Cancel</button>
-            <button className="save-btn" onClick={handleSubmit}>Save Changes</button>
+            <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
+            <button type="submit" className="save-btn">Save Changes</button>
           </div>
         </form>
       </div>

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import './ViewSelfStudyPlan.css';
 const ViewSelfStudyPlan = () => {
+  const location = useLocation();
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const queryParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  const subjectId = queryParams.get('subjectId');
 
   useEffect(() => {
     fetchPlans();
@@ -14,7 +18,7 @@ const ViewSelfStudyPlan = () => {
 
   const fetchPlans = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/self-study-plans');
+      const res = await axios.get(`http://127.0.0.1:8000/api/student/subject/${subjectId}/self-study-plans`);
       setPlans(res.data);
     } catch (err) {
       console.error('Failed to fetch plans:', err);
