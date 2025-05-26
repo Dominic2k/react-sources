@@ -14,8 +14,8 @@ const ClassCard = ({ subject, teacher, avatarUrl }) => {
     <div className="class-card">
       <div className="class-card-header">
         <div>
-          <div className="class-card-header-title">{subject}</div>
-          <div className="class-card-header-teacher">{teacher}</div>
+          <div className="class-card-header-title"><strong>{subject}</strong></div>
+          <div className="class-card-header-teacher"><i>{teacher}</i></div>
         </div>
         <div className="class-card-avatar">
           {avatarUrl ? (

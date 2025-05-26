@@ -464,8 +464,7 @@ const SubjectDetail = () => {
                   </button>
                 </div>
                 <div className="modal-content">
-                  <SelfStudyFormModal 
-                  studentId={studentId}
+                  <SelfStudyFormModal
                     subjectId={subjectId} 
                     onClose={() => setShowSelfStudyModal(false)}
                     onSuccess={handleSelfStudyFormSuccess}
