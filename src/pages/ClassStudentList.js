@@ -48,13 +48,41 @@ const ClassStudentList = () => {
       {loading ? (
         <p>Loading students...</p>
       ) : students.length > 0 ? (
-        <ul className="student-list">
-          {students.map((student) => (
-            <li key={student.student_id}>
-              {student.full_name} - {student.email}
-            </li>
-          ))}
-        </ul>
+        <table className="student-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Upcoming Deadline</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.student_id}>
+                <td>{student.full_name}</td>
+                <td>{student.email}</td>
+                <td>
+                  {student.upcoming_deadline ? (
+                    <span className="deadline-badge">
+                      {student.upcoming_deadline}
+                    </span>
+                  ) : (
+                    "None"
+                  )}
+                </td>
+                <td>
+                  <button
+                    className="view-profile-btn"
+                    onClick={() => navigate(`/student/profile${student.student_id}`)}
+                  >
+                    👤 View Profile
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No students found for this class.</p>
       )}
