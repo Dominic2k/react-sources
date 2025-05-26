@@ -464,8 +464,7 @@ const SubjectDetail = () => {
                   </button>
                 </div>
                 <div className="modal-content">
-                  <SelfStudyFormModal 
-                  studentId={studentId}
+                  <SelfStudyFormModal
                     subjectId={subjectId} 
                     onClose={() => setShowSelfStudyModal(false)}
                     onSuccess={handleSelfStudyFormSuccess}
@@ -626,7 +625,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
 };
 
 // Component mới cho Self-study Form dạng modal
-const SelfStudyFormModal = ({ studentId, subjectId, onClose, onSuccess }) => {
+const SelfStudyFormModal = ({subjectId, onClose, onSuccess }) => {
   const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     module: '',
