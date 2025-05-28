@@ -2,8 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import SubjectDetail from '../pages/SubjectDetail';
 import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
-import InClassForm from '../pages/InClassPlan/InClassForm';
-import ShowInClassForm from '../pages/InClassPlan/ShowInClassForm';
+import ShowInClassPlan from '../pages/InClassPlan/ShowInClassPlan';
 import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
@@ -17,7 +16,6 @@ import StudentList from '../pages/Admin/Students/StudentList';
 import StudentForm from '../pages/Admin/Students/StudentForm';
 import ClassList from '../pages/Admin/Classes/ClassList';
 import ClassForm from '../pages/Admin/Classes/ClassForm';
-import { useNavigate } from 'react-router-dom';
 // Xóa import StudentProfile trùng lặp nếu có
 
 // Import Teacher pagespages
@@ -35,12 +33,10 @@ const AppRoutes = () => (
     <Route path="/logout" element={<Logout />} />
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
-    {/* <Route path="/student-journal" element={<StudentJournalPage />} /> */}
       
     <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
     <Route path="/subjects/:subjectId/self-study-plans" element={<ViewSelfStudyPlan />} />
-    <Route path="/in-class-form" element={<InClassForm />} />
-    <Route path="/showinclassform" element={<ShowInClassForm/>} />
+    <Route path="/showinclassPlan" element={<ShowInClassPlan/>} />
     <Route path="/achievements" element={<AchievementPage/>}/>
 
     {/* Admin Routes */}
