@@ -5,6 +5,7 @@ import GoalSection from '../../components/goals/GoalSection';
 import GoalForm from '../../components/goals/GoalForm';
 import './SubjectDetail.css';
 import ShowInClassPlan from '../InClassPlan/ShowInClassPlan';
+import ShowSelfStudyPlan from '../SelfStudyPlan/ShowSelfStudyPlan';
 import axios from 'axios';
 import GoalCard from '../../components/goals/GoalCard';
 import TeacherTagBox from '../../components/layout/TeacherTagBox';
@@ -25,9 +26,6 @@ const SubjectDetail = () => {
   const [subjectInfo, setSubjectInfo] = useState(null);
   const [editingGoal, setEditingGoal] = useState(null);
   // Thêm state mới để lưu self-study plans
-  const [selfStudyPlans, setSelfStudyPlans] = useState([]);
-  const [loadingSelfStudy, setLoadingSelfStudy] = useState(false);
-  const [selfStudyError, setSelfStudyError] = useState('');
 
   const fetchSubjectDetail = async () => {
     try {
@@ -186,7 +184,6 @@ const SubjectDetail = () => {
   // Hàm xử lý khi form Self-study được lưu thành công
   const handleSelfStudyFormSuccess = () => {
     setShowSelfStudyModal(false);
-    fetchGoals(); // Refresh danh sách goals
   };
 
   const handleEditGoal = (goal) => setEditingGoal(goal);
@@ -195,63 +192,6 @@ const SubjectDetail = () => {
     fetchGoals();
     setEditingGoal(null);
   };
-
-  // Thêm hàm fetchSelfStudyPlans
-  const fetchSelfStudyPlans = async () => {
-    try {
-      setLoadingSelfStudy(true);
-      setSelfStudyError('');
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setSelfStudyError('Please login to view plans');
-        setLoadingSelfStudy(false);
-        return;
-      }
-
-      if (!subjectId) {
-        setLoadingSelfStudy(false);
-        return;
-      }
-
-      console.log('Fetching self-study plans for subject:', subjectId);
-      
-      const response = await fetch(`http://localhost:8000/api/student/subject/${subjectId}/self-study-plans`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch self-study plans');
-      }
-
-      const data = await response.json();
-      // console.log('Self-study plans response:', data);
-
-      if (Array.isArray(data)) {
-        setSelfStudyPlans(data);
-      } else if (data.data && Array.isArray(data.data)) {
-        setSelfStudyPlans(data.data);
-      } else {
-        setSelfStudyPlans([]);
-      }
-    } catch (error) {
-      // console.error('Error fetching self-study plans:', error);
-      setSelfStudyError('Error loading self-study plans');
-      setSelfStudyPlans([]);
-    } finally {
-      setLoadingSelfStudy(false);
-    }
-  };
-
-  // Thêm useEffect để gọi API khi tab selfstudy được chọn
-  useEffect(() => {
-    if (activeTab === 'selfstudy' && classSubjectId) {
-      fetchSelfStudyPlans();
-    }
-  }, [activeTab, classSubjectId]);
 
   return (
     <div className="subject-detail-container">
@@ -355,38 +295,7 @@ const SubjectDetail = () => {
           {activeTab === 'selfstudy' && (
             <div className="selfstudy-plans-container">
               <h2 className="subject-detail-title">Self-study Learning Plans</h2>
-                            {/* ✅ Teacher Tag Component */}
-              <div style={{ marginTop: '2rem' }}>
-                <TeacherTagBox entityId={classSubjectId} entityType="self_study_plan" />
-              </div>
-              
-              {loadingSelfStudy && <div className="subject-detail-loading">Loading plans...</div>}
-              {selfStudyError && <div className="subject-detail-error">{selfStudyError}</div>}
-              {!loadingSelfStudy && !selfStudyError && (
-                <div className="self-study-list">
-                  {selfStudyPlans.length > 0 ? (
-                    <ul className="plan-list">
-                      {selfStudyPlans.map((plan) => (
-                        <li key={plan.id} className="plan-item">
-                          <Link to={`/self-study-plans/${plan.lesson || 'class'}/${plan.id}?subjectId=${classSubjectId}`}>
-                            <div className="plan-item-title">
-                              <strong>{plan.lesson || 'Unnamed Plan'}</strong>
-                            </div>
-                            <div className="plan-item-details">
-                              <span>📅 {plan.date || 'No date'}</span>
-                              <span>⏰ {plan.time || 'No time'}</span>
-                              <span>📚 {plan.resources ? (plan.resources.length > 20 ? plan.resources.substring(0, 20) + '...' : plan.resources) : 'No resources'}</span>
-                            </div>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="empty-message">No self-study plans available</p>
-                  )}
-                </div>
-              )}
-
+              <ShowSelfStudyPlan subjectId={subjectId} />
               <button 
                 onClick={() => setShowSelfStudyModal(true)}
                 className="subject-detail-button create-button"
@@ -429,19 +338,12 @@ const SubjectDetail = () => {
               <div className="modal-container">
                 <div className="modal-header">
                   <h2>Create New In-class Plan</h2>
-                  <button 
-                    className="modal-close-button" 
-                    onClick={() => setShowInClassModal(false)}
-                  >
-                    &times;
-                  </button>
+                    <button className="modal-close-button" onClick={() => setShowInClassModal(false)} >
+                        &times;
+                    </button>
                 </div>
                 <div className="modal-content">
-                  <InClassFormModal 
-                    subjectId={subjectId} 
-                    onClose={() => setShowInClassModal(false)}
-                    onSuccess={handleInClassFormSuccess}
-                  />
+                    <InClassFormModal subjectId={subjectId} onClose={() => setShowInClassModal(false)} onSuccess={handleInClassFormSuccess} />
                 </div>
               </div>
             </div>
@@ -452,20 +354,11 @@ const SubjectDetail = () => {
             <div className="modal-overlay">
               <div className="modal-container self-study-modal">
                 <div className="modal-header">
-                  <h2>Create New Self-study Plan</h2>
-                  <button 
-                    className="modal-close-button" 
-                    onClick={() => setShowSelfStudyModal(false)}
-                  >
-                    &times;
-                  </button>
+                    <h2>Create New Self-study Plan</h2>
+                    <button className="modal-close-button" onClick={() => setShowSelfStudyModal(false)} >&times;</button>
                 </div>
                 <div className="modal-content">
-                  <SelfStudyFormModal
-                    subjectId={subjectId} 
-                    onClose={() => setShowSelfStudyModal(false)}
-                    onSuccess={handleSelfStudyFormSuccess}
-                  />
+                    <SelfStudyFormModal subjectId={subjectId} onClose={() => setShowSelfStudyModal(false)} onSuccess={handleSelfStudyFormSuccess} />
                 </div>
               </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
   const [date, setDate] = useState(''); // Thêm state date
   const [module, setModule] = useState('IT English');
@@ -36,7 +37,7 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
         problem_solved: solved === 'Yes'
     };
 
-    console.log('Sending data:', data);
+    // console.log('Sending data:', data);
     const token = localStorage.getItem("token"); // Log dữ liệu gửi đi
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/student/subject/${subjectId}/in-class-plans`, { 

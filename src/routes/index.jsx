@@ -1,11 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import SubjectDetail from '../pages/SubjectDetail';
-import SelfStudyPlan from '../pages/StudyPlan/SelfStudyPlan';
 import ShowInClassPlan from '../pages/InClassPlan/ShowInClassPlan';
 import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
-import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
 
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
@@ -33,9 +31,6 @@ const AppRoutes = () => (
     <Route path="/logout" element={<Logout />} />
     <Route path="/subject/:subjectId" element={<SubjectDetail />} />
     <Route path="/in-class-plan" element={<Navigate to="/student-journal" />} />
-      
-    <Route path="/self-study-plans/create" element={<SelfStudyPlan />} />
-    <Route path="/subjects/:subjectId/self-study-plans" element={<ViewSelfStudyPlan />} />
     <Route path="/showinclassPlan" element={<ShowInClassPlan/>} />
     <Route path="/achievements" element={<AchievementPage/>}/>
 
