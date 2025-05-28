@@ -5,31 +5,31 @@ import axios from 'axios';
 import './SelfStudyPlan.css';
 
 const SelfStudyPlan = () => {
-  const { className, goalId } = useParams();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const subjectId = queryParams.get('subjectId');
+    const { className, goalId } = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const subjectId = queryParams.get('subjectId');
   
-  const today = new Date().toISOString().split('T')[0];
-  const [formData, setFormData] = useState({
-    module: '',
-    lesson: '',
-    time: '',
-    resources: '',
-    activities: '',
-    concentration: 'Yes',
-    planFollow: 'Not sure',
-    evaluation: '',
-    reinforcing: '',
-  });
+    const today = new Date().toISOString().split('T')[0];
+    const [formData, setFormData] = useState({
+        module: '',
+        lesson: '',
+        time: '',
+        resources: '',
+        activities: '',
+        concentration: 'Yes',
+        planFollow: 'Not sure',
+        evaluation: '',
+        reinforcing: '',
+    });
 
-  const [classNameFromAPI, setClassName] = useState('');
-  const navigate = useNavigate();
+    const [classNameFromAPI, setClassName] = useState('');
+    const navigate = useNavigate();
 
-  const handleGoToList = () => {
+    const handleGoToList = () => {
     // Nếu có subjectId, quay lại trang subject detail
-    navigate(`/subject/${subjectId}`);
-  };
+        navigate(`/subject/${subjectId}`);
+    };
 
   useEffect(() => {
     const fetchStudyPlan = async () => {
