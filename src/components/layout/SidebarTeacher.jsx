@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Sidebar.css';
 
-const SidebarTeacher = () => {
+const SidebarTeacher = ({ onSetDeadline }) => {
   const navigate = useNavigate();
+  const { classId, teacherId } = useParams(); 
   const [userData, setUserData] = useState({
     name: 'Loading...',
     role: 'Loading...',
@@ -18,7 +19,7 @@ const SidebarTeacher = () => {
 
         const token = localStorage.getItem('token');
 
-        const res = await fetch('http://localhost:8000/api/user', {
+        const res = await fetch(`http://localhost:8000/api/teacher/${teacherId}`, {
           signal: controller.signal,
           headers: {
             'Content-Type': 'application/json',
@@ -62,10 +63,15 @@ const SidebarTeacher = () => {
   }, []);
 
   const handleProfileClick = () => navigate('/profile');
-  const handleCreateDeadline = () => navigate('/create-deadline');
+
+  const handleCreateDeadline = () => {
+    if (onSetDeadline) {
+      onSetDeadline(); // ✅ Hiện modal
+    }
+  };
 
   const navItems = [
-    { icon: '🏫', label: 'Classes', path: '/classes' },
+    { icon: '🏫', label: 'Classes', path: `/teacher/${teacherId}/classes` },
     { icon: '📄', label: 'Reports', path: '/reports' },
     { icon: '⏱️', label: 'Activity log', path: '/activity-log' },
     { icon: '🚪', label: 'Logout', path: '/logout' },
@@ -76,7 +82,7 @@ const SidebarTeacher = () => {
       <div className="sidebar-avatar" onClick={handleProfileClick} title="View Profile">
         <div className="sidebar-avatar-img" aria-label="User avatar">
           {userData.avatar ? (
-            <img src={userData.avatar} alt={`Avatar of ${userData.name}`} width="56" height="56" />
+            <img src={userData.avatar} alt={`Avatar of ${userData.full_name}`} width="56" height="56" />
           ) : (
             <div style={{ width: 56, height: 56, backgroundColor: '#ccc', borderRadius: '50%' }} />
           )}
@@ -88,7 +94,6 @@ const SidebarTeacher = () => {
       <button
         className="btn-deadline"
         type="button"
-        aria-label="Create Deadline"
         onClick={handleCreateDeadline}
       >
         📅 Create Deadline
@@ -100,8 +105,7 @@ const SidebarTeacher = () => {
             key={item.label}
             className={`sidebar-item${window.location.pathname === item.path ? ' active' : ''}`}
             onClick={() => navigate(item.path)}
-            style={{ cursor: 'pointer' }}
-          >
+            style={{ cursor: 'pointer' }}>
             <span style={{ marginRight: '8px' }}>{item.icon}</span>
             <span>{item.label}</span>
           </div>

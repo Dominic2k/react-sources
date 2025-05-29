@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SidebarTeacher from '../components/layout/SidebarTeacher';
+import SetDeadline from '../pages/Deadline/SetDealine';
 import axios from "axios";
 import "./StudentList.css";
 
@@ -9,6 +10,7 @@ const ClassStudentList = () => {
   const [students, setStudents] = useState([]);
   const [className, setClassName] = useState(""); // State để lưu tên lớp
   const [loading, setLoading] = useState(true);
+  const [showDeadlineModal, setShowDeadlineModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const ClassStudentList = () => {
 
   return (
     <div className="student-page">
-      <SidebarTeacher />
+      <SidebarTeacher onSetDeadline={() => setShowDeadlineModal(true)} />
       <main className="main-content">
       <button className="btn-back" onClick={() => navigate(-1)}>← Back to Classes</button>
       <h2>Student List - {className}</h2>
@@ -87,6 +89,14 @@ const ClassStudentList = () => {
         <p>No students found for this class.</p>
       )}
       </main>
+      {showDeadlineModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-modal" onClick={() => setShowDeadlineModal(false)}>✖</button>
+            <SetDeadline />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

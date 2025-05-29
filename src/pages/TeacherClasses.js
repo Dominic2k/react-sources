@@ -12,10 +12,9 @@ const { teacherId } = useParams();
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  // const teacherId = 2;
 
   useEffect(() => {
-    if (!teacherId) return; // phòng trường hợp teacherId chưa có
+    if (!teacherId) return; 
 
     const fetchTeacherClasses = async () => {
       try {

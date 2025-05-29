@@ -7,7 +7,7 @@ import ShowInClassForm from '../pages/InClassPlan/ShowInClassForm';
 import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
 import ViewSelfStudyPlan from '../pages/StudyPlan/ViewSelfStudyPlanTable';
-
+import SetDeadline from '../pages/Deadline/SetDealine';
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
 import AchievementPage from '../pages/Achievement/AchievementPage';
@@ -55,6 +55,7 @@ const AppRoutes = () => (
     <Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
     <Route path="/classes/:classId/students" element={<ClassStudentList />} />
 
+    <Route path="/classes/:classId/deadlines/create-deadline" element={<SetDeadline />} />
   </Routes>
 );
 
