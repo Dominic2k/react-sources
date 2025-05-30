@@ -4,7 +4,7 @@ import SubjectDetail from '../pages/SubjectDetail';
 import ShowInClassPlan from '../pages/InClassPlan/ShowInClassPlan';
 import { Navigate } from 'react-router-dom';
 import StudentProfile from '../pages/Profile/StudentProfile';
-
+import SetDeadline from '../pages/Deadline/SetDealine';
 import LoginForm from '../pages/Auth/Login';
 import Logout from '../pages/Auth/Logout';
 import AchievementPage from '../pages/Achievement/AchievementPage';
