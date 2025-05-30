@@ -6,9 +6,10 @@ import axios from "axios";
 import "./StudentList.css";
 
 const ClassStudentList = () => {
-  const { teacherId,classId } = useParams();
+  const { classId } = useParams();
   const [students, setStudents] = useState([]);
-  const [className, setClassName] = useState(""); // State để lưu tên lớp
+  const [className, setClassName] = useState(""); 
+  const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeadlineModal, setShowDeadlineModal] = useState(false);
   const navigate = useNavigate();
@@ -31,6 +32,10 @@ const ClassStudentList = () => {
         const data = response.data.data;
         setStudents(data.students || []);
         setClassName(data.class_name || `Class ${classId}`);
+
+        if(data.teacher_id) {
+          setTeacher(data.teacher_id);
+        }
       } catch (error) {
         console.error("Failed to fetch students");
       } finally {
@@ -41,11 +46,13 @@ const ClassStudentList = () => {
     fetchStudents();
   }, [classId]);
 
+  
+
   return (
     <div className="student-page">
-      <SidebarTeacher onSetDeadline={() => setShowDeadlineModal(true)} />
+      <SidebarTeacher teacherId={teacher} onSetDeadline={() => setShowDeadlineModal(true)} />
       <main className="main-content">
-      <button className="btn-back" onClick={() => navigate(-1)}>← Back to Classes</button>
+      <button className="btn-back" onClick={() => navigate(-1)}>Back</button>
       <h2>Student List - {className}</h2>
       {loading ? (
         <p>Loading students...</p>
@@ -55,7 +62,6 @@ const ClassStudentList = () => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Upcoming Deadline</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -64,15 +70,6 @@ const ClassStudentList = () => {
               <tr key={student.student_id}>
                 <td>{student.full_name}</td>
                 <td>{student.email}</td>
-                <td>
-                  {student.upcoming_deadline ? (
-                    <span className="deadline-badge">
-                      {student.upcoming_deadline}
-                    </span>
-                  ) : (
-                    "None"
-                  )}
-                </td>
                 <td>
                   <button
                     className="view-profile-btn"

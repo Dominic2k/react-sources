@@ -55,7 +55,6 @@ const AppRoutes = () => (
     <Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
     <Route path="/classes/:classId/students" element={<ClassStudentList />} />
 
-    <Route path="/classes/:classId/deadlines/create-deadline" element={<SetDeadline />} />
   </Routes>
 );
 

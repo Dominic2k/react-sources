@@ -32,14 +32,14 @@ export default function CreateDeadlineForm() {
         body: JSON.stringify({
           title,
           description,
-          due_date: new Date(dueDate).toISOString(),
+          due_date: dueDate,
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert("Tạo deadline thành công");
+        alert("Set deadline successfully");
         setTitle("");
         setDescription("");
         setDueDate("");
@@ -58,7 +58,7 @@ export default function CreateDeadlineForm() {
   const fetchClassInfo = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8000/api/classes/${classId}`, {
+      const res = await fetch(`http://127.0.0.1:8000/api/classes/${classId}/students`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -82,29 +82,29 @@ export default function CreateDeadlineForm() {
 
   return (
     <form onSubmit={handleSubmit} className="form-container">
-      <h2>Tạo Deadline cho lớp {className}</h2>
+      <h2>Set deadline for class {className}</h2>
 
       <div className="form-group">
-        <label>Tiêu đề:</label>
+        <label>Title:</label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
           disabled={loading}
-          placeholder="Nhập tiêu đề deadline"/>
+          placeholder="Enter a deadline title"/>
       </div>
 
       <div className="form-group">
-        <label>Mô tả:</label>
+        <label>Description:</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           disabled={loading}
-          placeholder="Nhập mô tả (tùy chọn)"/>
+          placeholder="Enter descriptions"/>
       </div>
 
       <div className="form-group">
-        <label>Hạn chót:</label>
+        <label>Deadline:</label>
         <input
           type="datetime-local"
           value={dueDate}
@@ -114,7 +114,7 @@ export default function CreateDeadlineForm() {
       </div>
 
       <button type="submit" className="submit-btn" disabled={loading}>
-        {loading ? "Đang gửi..." : "Tạo Deadline"}
+        {loading ? "Sending..." : "Create Deadline"}
       </button>
     </form>
   );

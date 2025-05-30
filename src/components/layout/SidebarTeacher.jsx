@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Sidebar.css';
 
-const SidebarTeacher = ({ onSetDeadline }) => {
+const SidebarTeacher = ({ onSetDeadline, teacherId: propTeacherId }) => {
   const navigate = useNavigate();
-  const { classId, teacherId } = useParams(); 
+  const { teacherId: paramsTeacherId } = useParams();
+  const teacherId = propTeacherId || paramsTeacherId;
+  const { classId } = useParams(); 
   const [userData, setUserData] = useState({
     name: 'Loading...',
     role: 'Loading...',
@@ -12,6 +14,7 @@ const SidebarTeacher = ({ onSetDeadline }) => {
   });
 
   useEffect(() => {
+    if(!teacherId) return;
     const fetchUserData = async () => {
       try {
         const controller = new AbortController();
@@ -60,13 +63,13 @@ const SidebarTeacher = ({ onSetDeadline }) => {
     };
 
     fetchUserData();
-  }, []);
+  }, [teacherId]);
 
   const handleProfileClick = () => navigate('/profile');
 
   const handleCreateDeadline = () => {
     if (onSetDeadline) {
-      onSetDeadline(); // ✅ Hiện modal
+      onSetDeadline(); 
     }
   };
 
@@ -82,7 +85,7 @@ const SidebarTeacher = ({ onSetDeadline }) => {
       <div className="sidebar-avatar" onClick={handleProfileClick} title="View Profile">
         <div className="sidebar-avatar-img" aria-label="User avatar">
           {userData.avatar ? (
-            <img src={userData.avatar} alt={`Avatar of ${userData.full_name}`} width="56" height="56" />
+            <img src={userData.avatar} alt={`Avatar of ${userData.name}`} width="56" height="56" />
           ) : (
             <div style={{ width: 56, height: 56, backgroundColor: '#ccc', borderRadius: '50%' }} />
           )}
@@ -94,9 +97,7 @@ const SidebarTeacher = ({ onSetDeadline }) => {
       <button
         className="btn-deadline"
         type="button"
-        onClick={handleCreateDeadline}
-      >
-        📅 Create Deadline
+        onClick={handleCreateDeadline}> 📅 Create Deadline
       </button>
 
       <nav className="sidebar-nav" aria-label="Sidebar navigation">
