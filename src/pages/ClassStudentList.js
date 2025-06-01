@@ -66,6 +66,7 @@ const ClassStudentList = () => {
             </tr>
           </thead>
           <tbody>
+            {console.log("Student-s:", students)}
             {students.map((student) => (
               <tr key={student.student_id}>
                 <td>{student.full_name}</td>
@@ -73,7 +74,8 @@ const ClassStudentList = () => {
                 <td>
                   <button
                     className="view-profile-btn"
-                    onClick={() => navigate(`/student/profile${student.student_id}`)}
+                   onClick={() => navigate(`/teacher/student-profile/${student.student_id}`)}
+
                   >
                     👤 View Profile
                   </button>
