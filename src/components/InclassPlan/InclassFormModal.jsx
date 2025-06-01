@@ -34,7 +34,8 @@ const InClassFormModal = ({ subjectId, onClose, onSuccess }) => {
         self_assessment: difficultyLevel,
         difficulties_faced: difficulties,
         improvement_plan: plan,
-        problem_solved: solved === 'Yes'
+        problem_solved: solved === 'Yes',
+        student_id: localStorage.getItem('user_id')
     };
 
     // console.log('Sending data:', data);

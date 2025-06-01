@@ -18,9 +18,8 @@ const StudentForm = () => {
         password_confirmation: '',
         student_code: '',
         class_id: '',
-        phone: '',
         gender: 'male',
-        role: "",
+        role: "student",
         birthday: '',
         admission_date: '',
         current_semester: '1',
@@ -111,7 +110,7 @@ const StudentForm = () => {
         setError(null);
     
     // Validate form
-        if (!formData.full_name || !formData.email || !formData.student_code || !formData.class_id) {
+        if (!formData.full_name || !formData.email || !formData.class_id) {
             setError('Please fill in all required fields.');
             return;
         }
@@ -133,6 +132,11 @@ const StudentForm = () => {
             if (id && !apiData.password) {
                 delete apiData.password;
                 delete apiData.password_confirmation;
+            }
+
+            // Always set role as student for new students
+            if (!id) {
+                apiData.role = "student";
             }
       
       // For new users, ensure last_login is in the correct format
@@ -163,6 +167,7 @@ const StudentForm = () => {
                 });
             } else {
             // Create new student
+                console.log('Creating new student:', apiData);
                 await axios.post('http://localhost:8000/api/admin/students', apiData, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -235,7 +240,7 @@ const StudentForm = () => {
                 <div className="form-row">
                     <div className="form-group">
                             <label htmlFor="student_code">Student Code *</label>
-                            <input type="text" id="student_code" name="student_code" value={formData.student_code} onChange={handleChange} readOnly />
+                            <input type="text" id="student_code" name="student_code" value={formData.student_code} onChange={handleChange} required={!id} readOnly={!!id} />
                     </div>
                   
                   <div className="form-group">
@@ -282,10 +287,16 @@ const StudentForm = () => {
                 </div>
                 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="phone">Role</label>
-                    <input type="text" id="role" name="role" value={formData.role} onChange={handleChange} />
-                  </div>
+                  {id && (
+                    <div className="form-group">
+                      <label htmlFor="role">Role</label>
+                      <select id="role" name="role" value={formData.role} onChange={handleChange}>
+                          <option value="student">Student</option>
+                          <option value="admin">Admin</option>
+                          <option value="teacher">Teacher</option>
+                      </select>
+                    </div>
+                  )}
 
                   <div className="form-group">
                     <label htmlFor="gender">Gender</label>
