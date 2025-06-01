@@ -77,7 +77,7 @@ function LoginForm() {
       // Chuyển hướng theo role
       switch (role) {
         case 'admin':
-          navigate('/admin/students');
+          navigate('/admin/activity-logs');
           break;
         case 'teacher':
           navigate(`/teacher/${id}/classes`);

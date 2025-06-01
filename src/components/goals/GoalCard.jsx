@@ -1,5 +1,5 @@
 import React from 'react';
-import './GoalCard.css';
+import styles from './GoalCard.module.css';
 
 const GoalCard = ({ goal, onEdit }) => {
   const getStatusColor = (status) => {
@@ -23,23 +23,23 @@ const GoalCard = ({ goal, onEdit }) => {
 
   return (
     <div 
-      className="goal-card" 
+      className={styles['goal-card']} 
       style={{ borderLeft: `4px solid ${getStatusColor(goal.status)}` }}
     >
-      <div className="goal-header">
-        <h3 className="goal-title">{goal.title}</h3>
+      <div className={styles['goal-header']}>
+        <h3 className={styles['goal-title']}>{goal.title}</h3>
         <span 
-          className="goal-status"
+          className={styles['goal-status']}
           style={{ background: getStatusColor(goal.status) }}
         >
           {goal.status}
         </span>
       </div>
-      <p className="goal-description">{goal.description}</p>
-      <div className="goal-footer">
+      <p className={styles['goal-description']}>{goal.description}</p>
+      <div className={styles['goal-footer']}>
         <span>Type: {goal.goal_type === 'semester' ? 'Semester' : 'Weekly'}</span>
         {goal.deadline && <span>Deadline: {new Date(goal.deadline).toLocaleDateString()}</span>}
-        <button onClick={() => onEdit(goal)} className="goal-edit-btn">Edit</button>
+        <button onClick={() => onEdit(goal)} className={styles['goal-edit-btn']}>Edit</button>
       </div>
     </div>
   );
