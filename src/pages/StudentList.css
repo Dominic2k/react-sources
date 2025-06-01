@@ -1,21 +1,20 @@
 .student-page {
-  display: flex;       /* Chia layout 2 cột */
-  min-height: 100vh;   /* Chiều cao full màn hình */
+  display: flex;      
+  min-height: 100vh;   
   background-color: #f7f9fc;
 }
 
 .main-content {
-  flex: 1;              /* Phần còn lại cho nội dung chính */
+  flex: 1;              
   padding: 20px;
 }
 
 .btn-back {
-  width: 150px;
-  margin-bottom: 20px;
+  width: 72px;
   padding: 6px 12px;
-  background-color: #007bff;
+  background-color: #6cb9e5;
   border: none;
-  color: white;
+  color: black;
   border-radius: 4px;
   cursor: pointer;
 }

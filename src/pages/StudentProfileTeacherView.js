@@ -1,8 +1,8 @@
-// StudentProfileTeacherView.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SidebarTeacher from "../components/layout/SidebarTeacher";
+import "./StudentProfileTeacherView.css";
 
 const StudentProfileTeacherView = () => {
   const { studentId } = useParams();
@@ -66,11 +66,15 @@ const StudentProfileTeacherView = () => {
   }, [studentId]);
 
   const hasFeedback = (type, id, field) => {
-    return feedbacks.some(f => f.entity_type === type && f.entity_id === id && f.field_name === field);
+    return feedbacks.some(
+      (f) => f.entity_type === type && f.entity_id === id && f.field_name === field
+    );
   };
 
   const getFeedbackContent = (type, id, field) => {
-    const fb = feedbacks.find(f => f.entity_type === type && f.entity_id === id && f.field_name === field);
+    const fb = feedbacks.find(
+      (f) => f.entity_type === type && f.entity_id === id && f.field_name === field
+    );
     return fb ? fb.content : "";
   };
 
@@ -95,38 +99,83 @@ const StudentProfileTeacherView = () => {
   const saveComment = async () => {
     const token = localStorage.getItem("token");
 
-    await axios.post(
-      `http://127.0.0.1:8000/api/feedbacks`, // ✅ Đổi lại đúng route
-      { ...commentTarget, content: commentContent }, // bỏ `commentTarget &&` vì bạn đã kiểm tra ở ngoài
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
+    try {
+      await axios.post(
+        `http://127.0.0.1:8000/api/feedbacks`,
+        { ...commentTarget, content: commentContent },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    setCommentTarget(null);
-    setCommentContent("");
+      setCommentTarget(null);
+      setCommentContent("");
 
-    // Reload feedbacks
-    const refreshed = await axios.get(
-      `http://127.0.0.1:8000/api/teachers/students/${studentId}/feedbacks`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setFeedbacks(refreshed.data);
+      // Reload feedbacks
+      const refreshed = await axios.get(
+        `http://127.0.0.1:8000/api/teachers/students/${studentId}/feedbacks`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setFeedbacks(refreshed.data);
+    } catch (error) {
+      alert("Failed to save comment. Please try again.");
+      console.error(error);
+    }
   };
 
-
   if (loading) return <div className="p-4">Loading student detail...</div>;
-  if (!student) return <div className="p-4 text-red-600">Student not found or error occurred.</div>;
+  if (!student)
+    return <div className="p-4 text-red-600">Student not found or error occurred.</div>;
 
-  const renderCell = (value, type, id, field) => (
-    <td
-      onContextMenu={(e) => handleRightClick(e, type, id, field)}
-      style={{ position: "relative", cursor: "pointer" }}
-    >
-      {value}
-      {hasFeedback(type, id, field) && <span className="ml-1 text-yellow-500">💬</span>}
-    </td>
-  );
+  const renderCell = (value, type, id, field) => {
+    const isTarget =
+      commentTarget &&
+      commentTarget.entity_type === type &&
+      commentTarget.entity_id === id &&
+      commentTarget.field_name === field;
+
+    return (
+      <td
+        onContextMenu={(e) => handleRightClick(e, type, id, field)}
+        style={{
+          position: "relative",
+          cursor: "context-menu",
+          minWidth: "150px",
+          backgroundColor: isTarget ? "#fffbea" : "inherit",
+        }}
+      >
+        {isTarget ? (
+          <div>
+            <textarea
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              rows={3}
+              className="w-full p-1 border rounded text-sm"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2 mt-1">
+              <button
+                className="px-2 py-0.5 text-xs bg-gray-300 rounded"
+                onClick={() => setCommentTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded"
+                onClick={saveComment}
+                disabled={!commentContent.trim()}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {value}
+            {hasFeedback(type, id, field) && <span className="ml-1 text-yellow-500">💬</span>}
+          </>
+        )}
+      </td>
+    );
+  };
 
   return (
     <div className="student-page flex">
@@ -136,16 +185,20 @@ const StudentProfileTeacherView = () => {
           ← Back to Class
         </button>
 
-        <h2 className="text-2xl font-bold mb-4">👤 Profile of {student.name}</h2>
+        <h2 className="text-2xl font-bold mb-4">👤 Profile of {student.full_name}</h2>
 
         <nav className="tabs-nav">
-          {['goals', 'inclass', 'selfstudy'].map((tab) => (
+          {["goals", "inclass", "selfstudy"].map((tab) => (
             <button
               key={tab}
               className={`tab-button ${activeTab === tab ? "active" : ""}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'goals' ? 'Goals' : tab === 'inclass' ? 'In-Class Plans' : 'Self-Study Plans'}
+              {tab === "goals"
+                ? "Goals"
+                : tab === "inclass"
+                ? "In-Class Plans"
+                : "Self-Study Plans"}
             </button>
           ))}
         </nav>
@@ -155,7 +208,12 @@ const StudentProfileTeacherView = () => {
             <h3 className="text-xl font-semibold mb-2">🎯 Goals</h3>
             {student.goals?.length > 0 ? (
               <table className="custom-table">
-                <thead><tr><th>Title</th><th>Description</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {student.goals.map((goal) => (
                     <tr key={goal.id}>
@@ -165,7 +223,9 @@ const StudentProfileTeacherView = () => {
                   ))}
                 </tbody>
               </table>
-            ) : (<p>No goals set.</p>)}
+            ) : (
+              <p>No goals set.</p>
+            )}
           </section>
         )}
 
@@ -175,7 +235,16 @@ const StudentProfileTeacherView = () => {
             {inClassPlans.length > 0 ? (
               <table className="custom-table">
                 <thead>
-                  <tr><th>Date</th><th>Skills</th><th>Summary</th><th>Assessment</th><th>Difficulties</th><th>Improvement</th><th>Solved</th><th>Notes</th></tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Skills</th>
+                    <th>Summary</th>
+                    <th>Self-Assessment</th>
+                    <th>Difficulties</th>
+                    <th>Improvement</th>
+                    <th>Solved</th>
+                    <th>Notes</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {inClassPlans.map((plan) => (
@@ -192,7 +261,9 @@ const StudentProfileTeacherView = () => {
                   ))}
                 </tbody>
               </table>
-            ) : (<p>No in-class plans available.</p>)}
+            ) : (
+              <p>No in-class plans available.</p>
+            )}
           </section>
         )}
 
@@ -202,7 +273,17 @@ const StudentProfileTeacherView = () => {
             {selfStudyPlans.length > 0 ? (
               <table className="custom-table">
                 <thead>
-                  <tr><th>Date</th><th>Lesson</th><th>Time</th><th>Resources</th><th>Activities</th><th>Concentration</th><th>Plan Follow</th><th>Evaluation</th><th>Reinforcing</th></tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Lesson</th>
+                    <th>Time</th>
+                    <th>Resources</th>
+                    <th>Activities</th>
+                    <th>Concentration</th>
+                    <th>Plan Follow</th>
+                    <th>Evaluation</th>
+                    <th>Reinforcing</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {selfStudyPlans.map((plan) => (
@@ -220,34 +301,10 @@ const StudentProfileTeacherView = () => {
                   ))}
                 </tbody>
               </table>
-            ) : (<p>No self-study plans available.</p>)}
+            ) : (
+              <p>No self-study plans available.</p>
+            )}
           </section>
-        )}
-
-        {commentTarget && (
-          <div className="fixed bg-white shadow-md border rounded p-3 top-1/3 left-1/3 z-50">
-            <h4 className="font-semibold mb-2">📝 Comment</h4>
-            <textarea
-              className="w-full border p-2"
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              rows={4}
-            />
-            <div className="mt-2 flex justify-end space-x-2">
-              <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-                onClick={saveComment}
-              >
-                Save
-              </button>
-              <button
-                className="bg-gray-300 text-black px-3 py-1 rounded"
-                onClick={() => setCommentTarget(null)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
         )}
       </main>
     </div>

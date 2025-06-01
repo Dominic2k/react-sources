@@ -165,7 +165,6 @@
 }
 
 .edit-button, .delete-button {
-  background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;

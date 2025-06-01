@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-// import "./CommentableCell.css";
 
 const CommentableCell = ({ value, entityType, entityId, fieldName, teacherId, comments, refreshComments }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -19,31 +18,39 @@ const CommentableCell = ({ value, entityType, entityId, fieldName, teacherId, co
 
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
-    await axios.post("http://127.0.0.1:8000/api/feedbacks", {
-      entity_type: entityType,
-      entity_id: entityId,
-      teacher_id: teacherId,
-      field_name: fieldName,
-      content: content
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setShowPopup(false);
-    refreshComments();
+    try {
+      await axios.post("http://127.0.0.1:8000/api/feedbacks", {
+        entity_type: entityType,
+        entity_id: entityId,
+        teacher_id: teacherId,
+        field_name: fieldName,
+        content: content
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setShowPopup(false);
+      refreshComments();
+    } catch (err) {
+      alert("Failed to save comment");
+    }
   };
 
   return (
-    <td onContextMenu={handleContextMenu} className="relative comment-cell">
-      {value} {hasComment && <span className="comment-icon">📝</span>}
+    <td onContextMenu={handleContextMenu} className="relative comment-cell" style={{ cursor: "pointer" }}>
+      {value} {hasComment && <span style={{ marginLeft: 5, color: "orange" }}>📝</span>}
       {showPopup && (
-        <div className="comment-popup" style={{ top: position.y, left: position.x }}>
+        <div
+          className="comment-popup"
+          style={{ position: "absolute", top: position.y, left: position.x, background: "#fff", border: "1px solid #ccc", padding: 10, zIndex: 1000 }}
+        >
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={3}
+            style={{ width: 200 }}
           />
-          <div className="popup-actions">
-            <button onClick={handleSubmit}>💾 Save</button>
+          <div style={{ marginTop: 5, textAlign: "right" }}>
+            <button onClick={handleSubmit} style={{ marginRight: 5 }}>💾 Save</button>
             <button onClick={() => setShowPopup(false)}>❌ Close</button>
           </div>
         </div>
