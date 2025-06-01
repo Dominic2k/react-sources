@@ -23,6 +23,7 @@ import TeacherClasses from '../pages/TeacherClasses';
 import ClassStudentList from '../pages/ClassStudentList';
 
 import StudentProfileTeacherView from '../pages/StudentProfileTeacherView';
+import ClassSubjectAssignment from '../pages/Admin/ClassSubjectAssignment/ClassSubjectAssignment';
 
 const AppRoutes = () => (
   <Routes>
@@ -47,6 +48,7 @@ const AppRoutes = () => (
     <Route path="/admin/activity-logs" element={<ActivityLogs />} />
     <Route path="/admin/teachers" element={<Teachers />} />
     <Route path="/admin/subjects" element={<Subjects />} />
+    <Route path="/admin/class-subject-assignment" element={<ClassSubjectAssignment />} />
 
     <Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
     <Route path="/classes/:classId/students" element={<ClassStudentList />} />
