@@ -36,7 +36,8 @@ const SelfStudyFormModal = ({subjectId, onClose, onSuccess }) => {
             concentration: concentration,
             plan_follow: planFollow,
             evaluation: evaluation,
-            reinforcing: reinforcing
+            reinforcing: reinforcing,
+            student_id: localStorage.getItem('user_id')
         };
 
         const token = localStorage.getItem("token");

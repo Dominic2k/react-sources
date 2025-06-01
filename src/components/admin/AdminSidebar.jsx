@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AdminSidebar.module.css';
+import { Link } from 'react-router-dom';
 
 const AdminSidebar = () => {
     const navigate = useNavigate();
@@ -23,9 +24,9 @@ const AdminSidebar = () => {
             </div>
             
             <nav className={styles['admin-nav']}>
-                <div className={`${styles['admin-nav-item']} ${isActive('/admin/dashboard')}`} onClick={() => navigate('/admin/dashboard')} >
-                    <span className={styles['admin-nav-icon']}>🏠</span>
-                    <span className={styles['admin-nav-text']}>Dashboard</span>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/activity-logs')}`} onClick={() => navigate('/admin/activity-logs')} >
+                    <span className={styles['admin-nav-icon']}>📝</span>
+                    <span className={styles['admin-nav-text']}>Activity Logs</span>
                 </div>
 
                 <div className={`${styles['admin-nav-item']} ${isActive('/admin/teachers')}`} onClick={() => navigate('/admin/teachers')} >
@@ -46,11 +47,6 @@ const AdminSidebar = () => {
                 <div className={`${styles['admin-nav-item']} ${isActive('/admin/subjects')}`} onClick={() => navigate('/admin/subjects')} >
                     <span className={styles['admin-nav-icon']}>📚</span>
                     <span className={styles['admin-nav-text']}>Subjects</span>
-                </div>
-                
-                <div className={`${styles['admin-nav-item']} ${isActive('/admin/activity-logs')}`} onClick={() => navigate('/admin/activity-logs')} >
-                    <span className={styles['admin-nav-icon']}>📝</span>
-                    <span className={styles['admin-nav-text']}>Activity logs</span>
                 </div>
             </nav>
             
