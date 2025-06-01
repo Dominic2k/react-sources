@@ -48,6 +48,11 @@ const AdminSidebar = () => {
                     <span className={styles['admin-nav-icon']}>📚</span>
                     <span className={styles['admin-nav-text']}>Subjects</span>
                 </div>
+
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/class-subject-assignment')}`} onClick={() => navigate('/admin/class-subject-assignment')} >
+                    <span className={styles['admin-nav-icon']}>🔗</span>
+                    <span className={styles['admin-nav-text']}>Class Assignment</span>
+                </div>
             </nav>
             
             <div className={styles['admin-logout']} onClick={handleLogout}>

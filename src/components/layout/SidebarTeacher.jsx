@@ -74,9 +74,6 @@ const SidebarTeacher = ({ onSetDeadline, teacherId: propTeacherId }) => {
   };
 
   const navItems = [
-    { icon: '🏫', label: 'Classes', path: `/teacher/${teacherId}/classes` },
-    { icon: '📄', label: 'Reports', path: '/reports' },
-    { icon: '⏱️', label: 'Activity log', path: '/activity-log' },
     { icon: '🚪', label: 'Logout', path: '/logout' },
   ];
 
