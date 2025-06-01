@@ -15,7 +15,7 @@ const ShowInClassForm = ({ subjectId }) => {
 
   fetch(`http://localhost:8000/api/student/subject/${subjectId}/in-class-plans`, {
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${token}`, 
       "Content-Type": "application/json",
       "Accept": "application/json"
     }

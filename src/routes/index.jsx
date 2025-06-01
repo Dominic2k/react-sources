@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import TeacherClasses from '../pages/TeacherClasses';
 import ClassStudentList from '../pages/ClassStudentList';
 
+import StudentProfileTeacherView from '../pages/StudentProfileTeacherView';
 
 const AppRoutes = () => (
   <Routes>
@@ -54,6 +55,8 @@ const AppRoutes = () => (
 
     <Route path="/teacher/:teacherId/classes" element={<TeacherClasses />} />
     <Route path="/classes/:classId/students" element={<ClassStudentList />} />
+
+    <Route path="/teacher/student-profile/:studentId" element={<StudentProfileTeacherView />} />
 
   </Routes>
 );
