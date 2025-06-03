@@ -1,26 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import { Sidebar, Header } from '../../components/layout';
 import axios from 'axios';
 import AchievementUpload from './AchievementUpload';
 import AchievementItem from './AchievementItem';
 import './AchievementPage.css';
-import { Sidebar, Header } from '../../components/layout';
 
 function AchievementPage() {
   const [achievements, setAchievements] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState(null);
-  const API_URL = 'http://127.0.0.1:8000/api/achievements';
+  const [filter, setFilter] = useState('all');
+  const [filterValue, setFilterValue] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const API_URL = 'http://localhost:8000/api/achievements';
 
   useEffect(() => {
-    axios.get(API_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-    })
-      .then(res => setAchievements(res.data))
-      .catch(err => console.error('Error fetching achievements:', err));
-  }, []);
+    fetchAchievements();
+  }, [filter, filterValue]);
+
+  const fetchAchievements = async () => {
+    try {
+      setLoading(true);
+      let url = API_URL;
+      
+      if (filter === 'student') {
+        url = `${API_URL}/student/${filterValue}`;
+      } else if (filter === 'class-subject') {
+        url = `${API_URL}/class-subject/${filterValue}`;
+      } else if (filter === 'semester') {
+        url = `${API_URL}/semester/${filterValue}`;
+      }
+
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setAchievements(response.data.data || response.data);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching achievements:', err);
+      setError('Failed to fetch achievements');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddClick = () => {
     setEditingAchievement(null);
@@ -32,91 +59,98 @@ function AchievementPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveAchievement = (data) => {
-    if (editingAchievement) {
-      axios.post(`${API_URL}/${editingAchievement.id}?_method=PUT`, data, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-        .then(res => {
-          setAchievements(achievements.map(item =>
-            item.id === editingAchievement.id ? res.data : item
-          ));
-          setIsModalOpen(false);
-          setEditingAchievement(null);
-        })
-        .catch(err => console.error('Error updating achievement:', err));
-    } else {
-      axios.post(API_URL, data, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-        .then(res => {
-          setAchievements([...achievements, res.data]);
-          setIsModalOpen(false);
-        })
-        .catch(err => console.error('Error adding achievement:', err));
+  const handleSaveAchievement = async (data) => {
+    try {
+      const headers = {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      };
+
+      if (editingAchievement) {
+        // Update existing achievement
+        const response = await axios.put(
+          `${API_URL}/${editingAchievement.id}`,
+          data,
+          { headers }
+        );
+        setAchievements(achievements.map(item =>
+          item.id === editingAchievement.id ? response.data : item
+        ));
+      } else {
+        // Create new achievement
+        const response = await axios.post(API_URL, data, { headers });
+        setAchievements([...achievements, response.data]);
+      }
+      
+      setIsModalOpen(false);
+      setEditingAchievement(null);
+    } catch (err) {
+      console.error('Error saving achievement:', err);
+      setError('Failed to save achievement');
     }
   };
 
-  const handleDelete = (id) => {
-    axios.delete(`${API_URL}/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-    })
-      .then(() => {
-        setAchievements(achievements.filter(item => item.id !== id));
-      })
-      .catch(err => console.error('Error deleting achievement:', err));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this achievement?')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_URL}/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      setAchievements(achievements.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('Error deleting achievement:', err);
+      setError('Failed to delete achievement');
+    }
   };
 
-  const subjectMap = {
-    1: 'English',
-    2: 'Web Programming',
-    3: 'Database',
-  };
+  if (loading) return <div className="loading">Loading achievements...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="achievement-container">
+    <div className="achievement-page">
       <Sidebar />
-      <div className="main-content">
+      <div className="achievement-main">
         <Header />
-        <div className="achievement-header">
-          <h5>My Achievements</h5>
-        </div>
-        <div className="left-panel">
-          <button className="add-achievement-button" onClick={handleAddClick}>
-            + Add Achievement
-          </button>
-        </div>
-        <div className="achievement-list">
-          {achievements.map((item) => (
-            <AchievementItem
-              key={item.id}
-              image={item.file_url}
-              title={item.title}
-              description={item.description}
-              subjectName={subjectMap[item.class_subject_id] || 'Unknown'}
-              date={item.achievement_date}
-              semester={item.semester}
-              onDelete={() => handleDelete(item.id)}
-              onEdit={() => handleEditClick(item)}
-            />
-          ))}
-        </div>
+        <main className="achievement-content">
+          <div className="achievement-header">
+            <h2>Achievements</h2>
+            <button className="add-achievement-button" onClick={handleAddClick}>
+              + Add Achievement
+            </button>
+          </div>
+          <div className="achievement-list">
+            {achievements.map((item) => (
+              <AchievementItem
+                key={item.id}
+                image={item.file_url}
+                title={item.title}
+                description={item.description}
+                subjectName={item.class_subject?.name || 'Unknown'}
+                date={item.achievement_date}
+                semester={item.semester}
+                onDelete={() => handleDelete(item.id)}
+                onEdit={() => handleEditClick(item)}
+              />
+            ))}
+          </div>
+
+          <AchievementUpload
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingAchievement(null);
+            }}
+            onSubmit={handleSaveAchievement}
+            achievementToEdit={editingAchievement}
+          />
+        </main>
       </div>
-      <AchievementUpload
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingAchievement(null);
-        }}
-        onSubmit={handleSaveAchievement}
-        achievementToEdit={editingAchievement}
-      />
     </div>
   );
 }

@@ -77,54 +77,88 @@ function AchievementUpload({ isOpen, onClose, onSubmit, achievementToEdit }) {
   });
 
   const handleSubmit = async () => {
-  setError('');
+    setError('');
 
-  if (!title || !description || !classSubjectId || !achievementDate || !semester) {
-    setError('Vui lòng điền đầy đủ các trường.');
-    return;
-  }
+    // Check if all required fields are filled
+    if (!title || !description || !classSubjectId || !achievementDate || !semester) {
+      setError('Vui lòng điền đầy đủ các trường.');
+      return;
+    }
 
-  const formData = new FormData();
-  if (image && image instanceof File) {
-    formData.append('file_url', image);
-  }
-  formData.append('title', title);
-  formData.append('description', description);
-  formData.append('class_subject_id', classSubjectId);
-  formData.append('achievement_date', achievementDate);
-  formData.append('semester', semester);
+    // Check if an image is uploaded for a new achievement
+    if (!achievementToEdit && (!image || !image instanceof File)) {
+        setError('Vui lòng tải lên ảnh cho thành tích.');
+        return;
+    }
 
-  try {
-    let response;
+    const formData = new FormData();
+    // Only append file_url if a new file is selected or if it's an update and a file exists
+    if (image && image instanceof File) {
+      formData.append('file_url', image);
+    } else if (achievementToEdit && achievementToEdit.file_url && !image) {
+      // Keep existing file_url if no new file is selected during update
+       // Note: Backend might need to handle updates without a new file differently
+       // This frontend code assumes backend can handle not receiving file_url on PUT if not changed
+       // Or you might need to send the old file_url string if backend requires it
+       // For now, we won't append old file_url string as backend expects file for file_url field
+    }
+
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('class_subject_id', classSubjectId);
+    formData.append('achievement_date', achievementDate);
+    formData.append('semester', semester);
+
+    // Handle PUT method for updates - FormData with PUT can be tricky
+    // A common workaround is to use POST with _method=PUT
+    let method = 'POST';
+    let url = 'http://127.0.0.1:8000/api/achievements';
     if (achievementToEdit && achievementToEdit.id) {
-      response = await fetch(`http://127.0.0.1:8000/api/achievements/${achievementToEdit.id}?_method=PUT`, {
-        method: 'POST', 
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: formData
-      });
-    } else {
-      response = await fetch('http://127.0.0.1:8000/api/achievements', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: formData
-      });
+      method = 'POST'; // Use POST method for update workaround
+      url = `http://127.0.0.1:8000/api/achievements/${achievementToEdit.id}?_method=PUT`; // Append _method=PUT
     }
-    if (!response.ok) {
-      const errorData = await response.text(); 
-      throw new Error(errorData || 'Cập nhật thất bại!');
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          // 'Content-Type': 'multipart/form-data' is usually added automatically for FormData
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text(); 
+        // Attempt to parse JSON error first, fall back to text
+        try {
+          const errorJson = JSON.parse(errorData);
+          // Check if there's a message or errors field in the JSON response
+          if (errorJson.message) {
+              throw new Error(errorJson.message);
+          } else if (errorJson.errors) {
+              // If backend returns validation errors object
+              const validationErrors = Object.values(errorJson.errors).flat().join('\n');
+              throw new Error('Validation failed:\n' + validationErrors);
+          } else {
+              throw new Error('Cập nhật thất bại: ' + errorData); // Fallback with status text
+          }
+        } catch (parseError) {
+            // If response is not JSON, throw error with text data
+            throw new Error('Cập nhật thất bại: ' + errorData);
+        }
+      }
+
+      const result = await response.json();
+      onSubmit(result);
+      onClose();
+
+    } catch (err) {
+      setError(err.message || 'Cập nhật thất bại.');
+      console.error('Error:', err);
     }
-    const result = await response.json();
-    onSubmit(result);
-    onClose();
-  } catch (err) {
-    setError(err.message || 'Cập nhật thất bại.');
-    console.error('Error:', err);
-  }
-};
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -139,7 +173,8 @@ function AchievementUpload({ isOpen, onClose, onSubmit, achievementToEdit }) {
 
         {image && (
           <div className="image-preview-container">
-            <img src={image.preview} alt="Preview" className="image-preview" />
+            {/* Render image based on whether it's a File object (new) or a URL string (existing) */}
+            <img src={image.isFile === false ? image.preview : URL.createObjectURL(image)} alt="Preview" className="image-preview" />
           </div>
         )}
 

@@ -18,8 +18,8 @@ const StudentForm = () => {
         password_confirmation: '',
         student_code: '',
         class_id: '',
-        phone: '',
         gender: 'male',
+        role: "student",
         birthday: '',
         admission_date: '',
         current_semester: '1',
@@ -73,14 +73,15 @@ const StudentForm = () => {
 
             if (response.data && response.data.data) {
                 const student = response.data.data;
+                console.log('student:', student);
                 setFormData({
                     full_name: student.user?.full_name || '',
                     email: student.user?.email || '',
                     password: '',
                     password_confirmation: '',
                     student_code: student.student_code || '',
-                    class_id: student.class_id || '',
-                    phone: student.user?.phone || '',
+                    class_id: student.class_id?.toString() || '',
+                    role: student.user?.role || '',
                     gender: student.user?.gender || 'male',
                     birthday: student.user?.birthday ? student.user.birthday.split('T')[0] : '',
                     last_login: student.user?.last_login ? student.user.last_login.split('T')[0] : new Date().toISOString().split('T')[0],
@@ -109,7 +110,7 @@ const StudentForm = () => {
         setError(null);
     
     // Validate form
-        if (!formData.full_name || !formData.email || !formData.student_code || !formData.class_id) {
+        if (!formData.full_name || !formData.email || !formData.class_id) {
             setError('Please fill in all required fields.');
             return;
         }
@@ -131,6 +132,11 @@ const StudentForm = () => {
             if (id && !apiData.password) {
                 delete apiData.password;
                 delete apiData.password_confirmation;
+            }
+
+            // Always set role as student for new students
+            if (!id) {
+                apiData.role = "student";
             }
       
       // For new users, ensure last_login is in the correct format
@@ -161,6 +167,7 @@ const StudentForm = () => {
                 });
             } else {
             // Create new student
+                console.log('Creating new student:', apiData);
                 await axios.post('http://localhost:8000/api/admin/students', apiData, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -209,77 +216,36 @@ const StudentForm = () => {
                 {error && <div className="error-message">{error}</div>}
                 
                 <div className="form-group">
-                  <label htmlFor="full_name">Full Name *</label>
-                  <input
-                    type="text"
-                    id="full_name"
-                    name="full_name"
-                    value={formData.full_name}
-                    onChange={handleChange}
-                    required
-                  />
+                    <label htmlFor="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" value={formData.full_name} onChange={handleChange} required />
                 </div>
                 
                 <div className="form-group">
-                  <label htmlFor="email">Email *</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
+                    <label htmlFor="email">Email *</label>
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
                 </div>
                 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="password">Password {!id && '*'}</label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required={!id}
-                    />
-                  </div>
+                    <div className="form-group">
+                            <label htmlFor="password">Password {!id && '*'}</label>
+                            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required={!id} />
+                    </div>
                   
-                  <div className="form-group">
-                    <label htmlFor="password_confirmation">Confirm Password {!id && '*'}</label>
-                    <input
-                      type="password"
-                      id="password_confirmation"
-                      name="password_confirmation"
-                      value={formData.password_confirmation}
-                      onChange={handleChange}
-                      required={!id}
-                    />
-                  </div>
+                    <div className="form-group">
+                            <label htmlFor="password_confirmation">Confirm Password {!id && '*'}</label>
+                            <input type="password" id="password_confirmation" name="password_confirmation" value={formData.password_confirmation} onChange={handleChange} required={!id} />
+                    </div>
                 </div>
                 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="student_code">Student Code *</label>
-                    <input
-                      type="text"
-                      id="student_code"
-                      name="student_code"
-                      value={formData.student_code}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
+                    <div className="form-group">
+                            <label htmlFor="student_code">Student Code *</label>
+                            <input type="text" id="student_code" name="student_code" value={formData.student_code} onChange={handleChange} required={!id} readOnly={!!id} />
+                    </div>
                   
                   <div className="form-group">
                     <label htmlFor="class_id">Class *</label>
-                    <select
-                      id="class_id"
-                      name="class_id"
-                      value={formData.class_id}
-                      onChange={handleChange}
-                      required
-                    >
+                    <select id="class_id" name="class_id" value={formData.class_id} onChange={handleChange} required >
                       <option value="">Select Class</option>
                       {classes.map(cls => (
                         <option key={cls.id} value={cls.id}>
@@ -321,28 +287,23 @@ const StudentForm = () => {
                 </div>
                 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="phone">Phone Number</label>
-                    <input
-                      type="text"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  
+                  {id && (
+                    <div className="form-group">
+                      <label htmlFor="role">Role</label>
+                      <select id="role" name="role" value={formData.role} onChange={handleChange}>
+                          <option value="student">Student</option>
+                          <option value="admin">Admin</option>
+                          <option value="teacher">Teacher</option>
+                      </select>
+                    </div>
+                  )}
+
                   <div className="form-group">
                     <label htmlFor="gender">Gender</label>
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
+                    <select id="gender" name="gender" value={formData.gender} onChange={handleChange} >
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
                     </select>
                   </div>
                 </div>

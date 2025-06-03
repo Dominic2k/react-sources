@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Sidebar.css';
 
-const SidebarTeacher = () => {
+const SidebarTeacher = ({ onSetDeadline, teacherId: propTeacherId }) => {
   const navigate = useNavigate();
+  const { teacherId: paramsTeacherId } = useParams();
+  const teacherId = propTeacherId || paramsTeacherId;
+  const { classId } = useParams(); 
   const [userData, setUserData] = useState({
     name: 'Loading...',
     role: 'Loading...',
@@ -11,6 +14,7 @@ const SidebarTeacher = () => {
   });
 
   useEffect(() => {
+    if(!teacherId) return;
     const fetchUserData = async () => {
       try {
         const controller = new AbortController();
@@ -18,7 +22,7 @@ const SidebarTeacher = () => {
 
         const token = localStorage.getItem('token');
 
-        const res = await fetch('http://localhost:8000/api/user', {
+        const res = await fetch(`http://localhost:8000/api/teacher/${teacherId}`, {
           signal: controller.signal,
           headers: {
             'Content-Type': 'application/json',
@@ -59,15 +63,17 @@ const SidebarTeacher = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [teacherId]);
 
   const handleProfileClick = () => navigate('/profile');
-  const handleCreateDeadline = () => navigate('/create-deadline');
+
+  const handleCreateDeadline = () => {
+    if (onSetDeadline) {
+      onSetDeadline(); 
+    }
+  };
 
   const navItems = [
-    { icon: '🏫', label: 'Classes', path: '/classes' },
-    { icon: '📄', label: 'Reports', path: '/reports' },
-    { icon: '⏱️', label: 'Activity log', path: '/activity-log' },
     { icon: '🚪', label: 'Logout', path: '/logout' },
   ];
 
@@ -88,10 +94,7 @@ const SidebarTeacher = () => {
       <button
         className="btn-deadline"
         type="button"
-        aria-label="Create Deadline"
-        onClick={handleCreateDeadline}
-      >
-        📅 Create Deadline
+        onClick={handleCreateDeadline}> 📅 Create Deadline
       </button>
 
       <nav className="sidebar-nav" aria-label="Sidebar navigation">
@@ -100,8 +103,7 @@ const SidebarTeacher = () => {
             key={item.label}
             className={`sidebar-item${window.location.pathname === item.path ? ' active' : ''}`}
             onClick={() => navigate(item.path)}
-            style={{ cursor: 'pointer' }}
-          >
+            style={{ cursor: 'pointer' }}>
             <span style={{ marginRight: '8px' }}>{item.icon}</span>
             <span>{item.label}</span>
           </div>

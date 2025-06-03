@@ -5,6 +5,7 @@
 
 .tag-button-group {
   display: flex;
+  padding-left: 20px;
   gap: 10px;
   margin-bottom: 10px;
   justify-content: flex-start;

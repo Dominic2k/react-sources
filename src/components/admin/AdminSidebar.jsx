@@ -1,60 +1,63 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AdminSidebar.css';
+import styles from './AdminSidebar.module.css';
+import { Link } from 'react-router-dom';
 
 const AdminSidebar = () => {
     const navigate = useNavigate();
-  
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
         navigate('/login');
     };
 
+    const isActive = (path) => window.location.pathname === path ? styles.active : '';
+
     return (
-        <div className="admin-sidebar">
-            <div className="admin-logo">
-                <div className="admin-logo-icon">
+        <div className={styles['admin-sidebar']}>
+            <div className={styles['admin-logo']}>
+                <div className={styles['admin-logo-icon']}>
                     <span>⚙️</span>
                 </div>
-                <div className="admin-logo-text">Admin</div>
+                <div className={styles['admin-logo-text']}>Admin</div>
             </div>
             
-            <nav className="admin-nav">
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/dashboard' ? 'active' : ''}`} onClick={() => navigate('/admin/dashboard')} >
-                    <span className="admin-nav-icon">🏠</span>
-                    <span className="admin-nav-text">Dashboard</span>
+            <nav className={styles['admin-nav']}>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/activity-logs')}`} onClick={() => navigate('/admin/activity-logs')} >
+                    <span className={styles['admin-nav-icon']}>📝</span>
+                    <span className={styles['admin-nav-text']}>Activity Logs</span>
                 </div>
 
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/teachers' ? 'active' : ''}`} onClick={() => navigate('/admin/teachers')} >
-                    <span className="admin-nav-icon">👩‍🏫</span>
-                    <span className="admin-nav-text">Teachers</span>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/teachers')}`} onClick={() => navigate('/admin/teachers')} >
+                    <span className={styles['admin-nav-icon']}>👩‍🏫</span>
+                    <span className={styles['admin-nav-text']}>Teachers</span>
                 </div>
                 
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/students' ? 'active' : ''}`} onClick={() => navigate('/admin/students')} >
-                    <span className="admin-nav-icon">👨‍🎓</span>
-                    <span className="admin-nav-text">Students</span>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/students')}`} onClick={() => navigate('/admin/students')} >
+                    <span className={styles['admin-nav-icon']}>👨‍🎓</span>
+                    <span className={styles['admin-nav-text']}>Students</span>
                 </div>
                 
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/classes' ? 'active' : ''}`} onClick={() => navigate('/admin/classes')} >
-                    <span className="admin-nav-icon">📚</span>
-                    <span className="admin-nav-text">Classes</span>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/classes')}`} onClick={() => navigate('/admin/classes')} >
+                    <span className={styles['admin-nav-icon']}>📚</span>
+                    <span className={styles['admin-nav-text']}>Classes</span>
                 </div>
 
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/subjects' ? 'active' : ''}`} onClick={() => navigate('/admin/subjects')} >
-                    <span className="admin-nav-icon">📚</span>
-                    <span className="admin-nav-text">Subjects</span>
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/subjects')}`} onClick={() => navigate('/admin/subjects')} >
+                    <span className={styles['admin-nav-icon']}>📚</span>
+                    <span className={styles['admin-nav-text']}>Subjects</span>
                 </div>
-                
-                <div className={`admin-nav-item ${window.location.pathname === '/admin/activity-logs' ? 'active' : ''}`} onClick={() => navigate('/admin/activity-logs')} >
-                    <span className="admin-nav-icon">📝</span>
-                    <span className="admin-nav-text">Activity logs</span>
+
+                <div className={`${styles['admin-nav-item']} ${isActive('/admin/class-subject-assignment')}`} onClick={() => navigate('/admin/class-subject-assignment')} >
+                    <span className={styles['admin-nav-icon']}>🔗</span>
+                    <span className={styles['admin-nav-text']}>Class Assignment</span>
                 </div>
             </nav>
             
-            <div className="admin-logout" onClick={handleLogout}>
-                <span className="admin-logout-icon">🚪</span>
-                <span className="admin-logout-text">Log Out</span>
+            <div className={styles['admin-logout']} onClick={handleLogout}>
+                <span className={styles['admin-logout-icon']}>🚪</span>
+                <span className={styles['admin-logout-text']}>Log Out</span>
             </div>
 
         </div>
