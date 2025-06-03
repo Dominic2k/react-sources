@@ -55,7 +55,7 @@ const AppRoutes = () => (
 
     <Route path="/teacher/student-profile/:studentId" element={<StudentProfileTeacherView />} />
 
-  </Routes>
+  </Routes>   
 );
 
 export default AppRoutes;

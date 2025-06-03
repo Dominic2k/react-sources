@@ -4,9 +4,12 @@
   background-color: #f7f9fc;
 }
 
-.main-content {
+.student-list-main-content {
   flex: 1;              
   padding: 20px;
+  margin-left: 240px; /* Width of sidebar */
+  width: calc(100% - 240px);
+  box-sizing: border-box;
 }
 
 .btn-back {
@@ -20,11 +23,12 @@
 }
 
 .btn-deadline {
-  width: 214px;
+  width: 84%;
   margin-left: 13px;
   height: 45px;
   border-radius: 6px;
 }
+
 .student-list {
   list-style: none;
   padding: 0;
@@ -47,4 +51,11 @@
 
 .view-profile-btn:hover {
   background-color: #d0e7ff;
+}
+
+@media (max-width: 768px) {
+  .student-list-main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 }

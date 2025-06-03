@@ -55,7 +55,6 @@ const Sidebar = () => {
   const navItems = [
     { icon: '🏠', label: 'Home', path: '/' },
     { icon: '🏆', label: 'Achievements', path: '/achievements' },
-    { icon: '❓', label: 'Help', path: '/help' },
     { icon: '🚪', label: 'Logout', path: '/logout' },
   ];
 

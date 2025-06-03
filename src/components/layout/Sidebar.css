@@ -1,5 +1,5 @@
 .sidebar {
-  width: 240px;
+  width: 200px;
   background: #6cb9e5;
   color: #222;
   min-height: 100vh;
@@ -51,7 +51,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 180px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -62,7 +62,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 32px;
+  padding: 12px 24px;
   cursor: pointer;
   font-weight: 500;
   font-size: 16px;

@@ -7,6 +7,7 @@ function NotificationDropdown({ isOpen, onClose }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        console.log('NotificationDropdown isOpen:', isOpen);
         if (isOpen) {
             fetchDeadlines();
         }
@@ -15,6 +16,7 @@ function NotificationDropdown({ isOpen, onClose }) {
     const fetchDeadlines = async () => {
         try {
             const token = localStorage.getItem('token');
+            console.log('Fetching deadlines with token:', token);
             const response = await fetch('http://localhost:8000/api/student/deadlines', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -27,9 +29,11 @@ function NotificationDropdown({ isOpen, onClose }) {
             }
 
             const result = await response.json();
+            console.log('Deadlines response:', result);
             setDeadlines(result.data);
             setLoading(false);
         } catch (err) {
+            console.error('Error fetching deadlines:', err);
             setError(err.message);
             setLoading(false);
         }
