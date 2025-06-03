@@ -7,9 +7,12 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-.main-content {
+.student-profile-main-content {
   flex: 1;
   padding: 2rem;
+  margin-left: 240px; /* Width of sidebar */
+  width: calc(100% - 240px);
+  box-sizing: border-box;
   overflow-y: auto;
 }
 
@@ -30,7 +33,9 @@
 .tabs-nav {
   display: flex;
   gap: 1rem;
+  padding-left: 20px;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .tab-button {
@@ -38,7 +43,7 @@
   border: 2px solid transparent;
   border-radius: 9999px;
   background-color: #e0f2fe;
-  color: #2563eb; /* Blue */
+  color: #2563eb;
   font-weight: 600;
   transition: all 0.2s;
 }
@@ -61,21 +66,64 @@
   margin-bottom: 2rem;
 }
 
+/* Table Container - ĐÃ SỬA */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1rem 0;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Table Styles - ĐÃ SỬA */
 .custom-table {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid #2563eb;
+  table-layout: fixed; /* Sử dụng fixed layout */
 }
 
 .custom-table th,
 .custom-table td {
   padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border: 1.5px solid #2563eb;
+  width: auto; /* Tự động điều chỉnh chiều rộng */
+  min-width: 0; /* Cho phép co nhỏ hơn min-width */
+  max-width: none; /* Bỏ giới hạn max-width */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
+/* Định nghĩa chiều rộng cho từng cột */
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1) { width: 10%; } /* Date */
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) { width: 15%; } /* Skills/Lesson */
+.custom-table th:nth-child(3),
+.custom-table td:nth-child(3) { width: 15%; } /* Summary/Time */
+.custom-table th:nth-child(4),
+.custom-table td:nth-child(4) { width: 15%; } /* Self-Assessment/Resources */
+.custom-table th:nth-child(5),
+.custom-table td:nth-child(5) { width: 15%; } /* Difficulties/Activities */
+.custom-table th:nth-child(6),
+.custom-table td:nth-child(6) { width: 10%; } /* Improvement/Concentration */
+.custom-table th:nth-child(7),
+.custom-table td:nth-child(7) { width: 5%; } /* Solved/Plan Follow */
+.custom-table th:nth-child(8),
+.custom-table td:nth-child(8) { width: 10%; } /* Notes/Evaluation */
+.custom-table th:nth-child(9),
+.custom-table td:nth-child(9) { width: 5%; } /* Reinforcing */
+
 .custom-table th {
-  background-color: #fef3c7; /* Light orange */
+  background-color: #fed7aa;
   color: #b45309;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: normal;
 }
 
 .custom-table td {
@@ -93,6 +141,7 @@
   font-size: 1.1rem;
 }
 
+/* Comment section styles */
 textarea {
   resize: vertical;
 }
@@ -103,46 +152,99 @@ textarea {
 }
 
 /* Comment Popup */
-.fixed {
+.comment-popup {
+  position: fixed;
   z-index: 9999;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 300px;
 }
 
-textarea:focus {
+.comment-popup textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  margin-bottom: 1rem;
+}
+
+.comment-popup textarea:focus {
   outline: 2px solid #2563eb;
   border-color: #2563eb;
 }
 
-/* Comment Modal Buttons */
-button:disabled {
+.comment-popup .button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.comment-popup button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.comment-popup .save-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.comment-popup .cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.comment-popup .save-button:hover {
+  background-color: #388E3C;
+}
+
+.comment-popup .cancel-button:hover {
+  background-color: #d32f2f;
+}
+
+.comment-popup button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.custom-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #2563eb; /* Viền xanh dương rõ nét quanh bảng */
-}
+/* Responsive table adjustments - ĐÃ SỬA */
+@media (max-width: 768px) {
+  .student-profile-main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
 
-.custom-table th,
-.custom-table td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border: 1.5px solid #2563eb; /* Viền rõ ràng giữa các ô */
-}
+  .tabs-nav {
+    flex-wrap: wrap;
+  }
 
-.custom-table th {
-  background-color: #fed7aa; /* Light orange */
-  color: #b45309;
-  font-weight: bold;
-}
+  .custom-table {
+    width: 100%;
+  }
 
-.custom-table td {
-  background-color: #fff;
-  transition: background-color 0.2s;
-}
+  .custom-table th,
+  .custom-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
 
-.custom-table td:hover {
-  background-color: #fef9c3; /* Highlight nhẹ khi hover */
-  cursor: context-menu;
+  /* Thêm hướng dẫn cuộn ngang cho mobile */
+  .table-container::after {
+    content: "← Cuộn ngang để xem thêm →";
+    position: absolute;
+    bottom: -1.5rem;
+    left: 0;
+    font-size: 0.875rem;
+    color: #999;
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NotificationDropdown from '../student/NotificationDropdown';
+import NotificationDropdown from '../../components/student/NotificationDropdown';
 import './Header.css';
 
 function Header() {
@@ -14,7 +14,9 @@ function Header() {
     }, []);
 
     const toggleNotification = () => {
+        console.log('Current notification state:', isNotificationOpen);
         setIsNotificationOpen(!isNotificationOpen);
+        console.log('New notification state:', !isNotificationOpen);
     };
 
     return (
@@ -35,10 +37,10 @@ function Header() {
                     </span>
                 )}
             </div>
-            {userRole === 'student' && (
-                <NotificationDropdown 
-                    isOpen={isNotificationOpen} 
-                    onClose={() => setIsNotificationOpen(false)} 
+            {(userRole === 'student' || userRole === 'teacher') && (
+                <NotificationDropdown
+                    isOpen={isNotificationOpen}
+                    onClose={() => setIsNotificationOpen(false)}
                 />
             )}
         </header>

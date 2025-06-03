@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SidebarTeacher from '../components/layout/SidebarTeacher';
+import { Header } from '../components/layout';
 import SetDeadline from '../pages/Deadline/SetDealine';
 import axios from "axios";
 import "./StudentList.css";
@@ -46,48 +47,44 @@ const ClassStudentList = () => {
     fetchStudents();
   }, [classId]);
 
-  
-
   return (
     <div className="student-page">
       <SidebarTeacher teacherId={teacher} onSetDeadline={() => setShowDeadlineModal(true)} />
-      <main className="main-content">
-      <button className="btn-back" onClick={() => navigate(-1)}>Back</button>
-      <h2>Student List - {className}</h2>
-      {loading ? (
-        <p>Loading students...</p>
-      ) : students.length > 0 ? (
-        <table className="student-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {console.log("Student-s:", students)}
-            {students.map((student) => (
-              <tr key={student.student_id}>
-                <td>{student.full_name}</td>
-                <td>{student.email}</td>
-                <td>
-                  <button
-                    className="view-profile-btn"
-                   onClick={() => navigate(`/teacher/student-profile/${student.student_id}`)}
-
-                  >
-                    👤 View Profile
-                  </button>
-                </td>
+      <div className="main-content">
+        <Header />
+        <h2 style={{ paddingLeft: '20px' }}>Student List - {className}</h2>
+        {loading ? (
+          <p>Loading students...</p>
+        ) : students.length > 0 ? (
+          <table className="student-table" style={{margin: '20px'}}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No students found for this class.</p>
-      )}
-      </main>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr key={student.student_id}>
+                  <td>{student.full_name}</td>
+                  <td>{student.email}</td>
+                  <td>
+                    <button
+                      className="view-profile-btn"
+                      onClick={() => navigate(`/teacher/student-profile/${student.student_id}`)}
+                    >
+                      👤 View Profile
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No students found for this class.</p>
+        )}
+      </div>
       {showDeadlineModal && (
         <div className="modal-overlay">
           <div className="modal-content">
